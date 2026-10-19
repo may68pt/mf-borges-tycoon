@@ -43,7 +43,7 @@ function apply(p){
       if(typeof a==='function')continue;
       S[k]=a;
     }
-    S.ph='setup';S.t=540;S.over=false;S.speed=2;
+    S.ph='setup';S.t=540;S.over=false;S.speed=2;S.log=String(S.log||'').replace(/ Setup: .*$/,'');
     for(const r of p.stalls){
       const m=mkStall(r.i);m.position.set(r.x+.5,gy(r.x+.5,r.z+.5),r.z+.5);m.rotation.y=(r.rot|0)*Math.PI/2;sc.add(m);
       const u=r.u||{};
@@ -105,7 +105,7 @@ let onClose=null;
 function open(html,close){M.innerHTML='<div>'+html+'</div>';M.style.display='flex';onClose=close||null;}
 function shut(){M.style.display='none';M.innerHTML='';const f=onClose;onClose=null;if(f)f();}
 const when=iso=>{try{return new Date(iso).toLocaleString();}catch(e){return iso;}};
-const desc=(p,at)=>'Day '+Math.min(p.S.day,DAYS)+'/'+DAYS+' · €'+Math.round(p.S.cash)+' · '+Object.keys(p.S.band||{}).length+' acts · '+(p.stalls.length)+' stalls<br><span class="m">saved '+esc(when(at||p.savedAt))+'</span>';
+const desc=(p,at)=>'Day '+Math.min(p.S.day,DAYS)+'/'+DAYS+' · €'+Math.round(p.S.cash)+' · '+BL.filter(x=>p.S.band&&p.S.band[x.id]&&p.S.band[x.id].plays>0).length+' acts · '+(p.stalls.length)+' stalls<br><span class="m">saved '+esc(when(at||p.savedAt))+'</span>';
 const legal='<a href="'+esc(CFG.legalUrl||'legal.html')+'#privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="'+esc(CFG.legalUrl||'legal.html')+'#terms" target="_blank" rel="noopener">Terms</a>';
 
 function signInView(){
