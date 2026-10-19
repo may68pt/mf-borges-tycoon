@@ -2,9 +2,16 @@
 (function(){
 const css=`
 #nr .rp{--g:#2fbf71;--r:#ff5a43}
+#nr .rp-bar{position:sticky;top:-18px;z-index:3;display:flex;align-items:center;justify-content:center;height:34px;margin:-6px -4px 4px;touch-action:none;cursor:grab}
+#nr .rp-grip{width:44px;height:5px;border-radius:3px;background:rgba(127,127,160,.55)}
+body.u2 #nr .rp-x,#nr .rp-x{position:absolute;right:0;top:0;width:36px;min-height:36px;height:36px;margin:0;padding:0;border-radius:50%;border:2px solid rgba(127,127,160,.5);background:rgba(127,127,160,.2);color:inherit;font:900 15px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
 #nr .rp-top{display:flex;gap:10px;align-items:flex-end;margin-bottom:8px}
 #nr .mgs{position:relative;width:118px;height:118px;flex:none;border-radius:16px;background:radial-gradient(circle at 50% 40%,#4a3a8a,#1b1b2f 75%);border:2px solid var(--ln);overflow:visible}
-#nr .mgs .pic{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);image-rendering:pixelated;border:0;border-radius:10px;transform-origin:50% 90%}
+#nr .mgs .hd{position:absolute;inset:0;transform-origin:50% 92%}
+#nr .mgs .pic{position:absolute;left:15px;top:6px;width:88px;height:106px;image-rendering:pixelated;border:0;border-radius:10px}
+#nr .mgs .bl{position:absolute;left:45px;top:46px;width:9px;height:7px;background:#fbe0c8;transform:scaleY(0);transform-origin:50% 0;animation:blink 3.7s infinite;pointer-events:none}
+#nr .mgs .bl.r{left:64px;animation-delay:.03s}
+.mgs .hd{animation:mbreath 3.2s ease-in-out infinite}
 #nr .mgs .pr{position:absolute;inset:0;pointer-events:none}
 #nr .mgs .pr>*{position:absolute;line-height:1;transform-origin:50% 50%}
 #nr .rp-say{position:relative;flex:1;min-height:60px;background:#fff;color:#1b1b2f;border-radius:14px;padding:12px 14px;font:900 20px/1.2 system-ui,sans-serif;letter-spacing:-.01em;box-shadow:0 3px 0 rgba(0,0,0,.3)}
@@ -46,14 +53,26 @@ const css=`
 @keyframes mnod{0%,100%{transform:none}50%{transform:translateY(4px) rotate(2deg)}}
 @keyframes msneeze{0%,55%{transform:none}65%{transform:translateY(-6px) scale(1.04)}78%{transform:translateY(5px) scaleY(.92)}100%{transform:none}}
 @keyframes mchew{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.95) translateY(2px)}}
-.mv-hic .pic{animation:mhic .55s ease-in-out 3}
-.mv-hair .pic{animation:mshake .12s linear infinite}
-.mv-bop .pic{animation:mbop .5s ease-in-out infinite}
-.mv-tilt .pic{animation:mtilt 2.6s ease-in-out}
-.mv-nod .pic{animation:mnod 1.2s ease-in-out infinite}
-.mv-sneeze .pic{animation:msneeze 1.6s ease-in-out}
-.mv-chew .pic{animation:mchew .35s ease-in-out infinite}
+.mv-hic .hd{animation:mhic .55s ease-in-out 3}
+.mv-hair .hd{animation:mshake .12s linear infinite}
+.mv-bop .hd{animation:mbop .5s ease-in-out infinite}
+.mv-tilt .hd{animation:mtilt 2.6s ease-in-out}
+.mv-nod .hd{animation:mnod 1.2s ease-in-out infinite}
+.mv-sneeze .hd{animation:msneeze 1.6s ease-in-out}
+.mv-chew .hd{animation:mchew .35s ease-in-out infinite}
+@keyframes mbreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,1.025)}}
+@keyframes blink{0%,91%,100%{transform:scaleY(0)}94%{transform:scaleY(1)}}
+@keyframes mlaugh{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-3deg)}75%{transform:translateY(-4px) rotate(3deg)}}
+@keyframes mdrop{0%,100%{transform:none}55%{transform:rotate(9deg) translateY(5px)}62%{transform:rotate(-2deg)}70%{transform:none}}
+@keyframes mslow{0%,100%{transform:scale(1)}50%{transform:scale(1.04,1.05) translateY(-2px)}}
+@keyframes mdance{0%,100%{transform:translate(-5px,0) rotate(-7deg)}25%{transform:translate(0,-6px) rotate(0)}50%{transform:translate(5px,0) rotate(7deg)}75%{transform:translate(0,-6px) rotate(0)}}
+.mv-laugh .hd{animation:mlaugh .18s ease-in-out infinite}
+.mv-drop .hd{animation:mdrop 3s ease-in-out}
+.mv-slow .hd{animation:mslow 2.4s ease-in-out infinite}
+.mv-dance .hd{animation:mdance .6s ease-in-out infinite}
 /* props */
+@keyframes pflash{0%,78%,100%{opacity:0}83%{opacity:.92}}
+@keyframes pbird{0%{transform:translate(70px,-40px) rotate(20deg);opacity:0}25%{opacity:1}45%,80%{transform:translate(0,0) rotate(0)}100%{transform:translate(0,-8px);opacity:0}}
 @keyframes pdrink{0%{transform:translate(34px,30px) rotate(0)}25%,70%{transform:translate(8px,-12px) rotate(-30deg)}85%,100%{transform:translate(34px,30px) rotate(0)}}
 @keyframes ppuff{0%{opacity:0;transform:translate(0,0) scale(.4)}20%{opacity:.9}100%{opacity:0;transform:translate(14px,-46px) scale(1.7)}}
 @keyframes pfade{0%{opacity:0;transform:scale(.4)}15%,85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.6)}}
@@ -70,9 +89,10 @@ const css=`
 .mgs .pr .wig{left:17%;top:2%;width:66%;height:36%;background:var(--wc);border-radius:50% 50% 16% 16%;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);animation:pwig 3.4s ease-out forwards}
 .mgs .pr .wig.afro{left:6%;top:-12%;width:88%;height:52%;border-radius:50%}
 .mgs .pr .wig.bob{left:12%;width:76%;height:62%;border-radius:45% 45% 8% 8%;clip-path:polygon(0 0,100% 0,100% 100%,82% 100%,82% 42%,18% 42%,18% 100%,0 100%)}
+.mgs .pr .wig.beehive{left:22%;top:-14%;width:56%;height:54%;border-radius:50% 50% 30% 30%}
 .mgs .pr .wig.mohawk{left:42%;top:-12%;width:16%;height:44%;border-radius:40% 40% 10% 10%}
 .mgs .pr .wig.rainbow{background:linear-gradient(90deg,#ff3d3d,#ffb02e,#f7e13c,#3ed16b,#35b6ff,#9b6bff)}
-@media (prefers-reduced-motion:reduce){#nr .mgs .pic,#nr .mgs .pr *,#nr .tl .ic,#nr .rp-net .ic,#nr .rp-net:after,#nr .rp-chips b{animation:none!important}}
+@media (prefers-reduced-motion:reduce){#nr .mgs .hd,#nr .mgs .bl,#nr .mgs .pr *,#nr .tl .ic,#nr .rp-net .ic,#nr .rp-net:after,#nr .rp-chips b{animation:none!important}}
 `;
 const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 
@@ -82,24 +102,37 @@ const wigs=['#ff3d9a','#35b6ff','#3ed16b','#9b6bff','#f7a21a','#e8e8ee','#ff5a43
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 // each move: [name, ms, body class, caption, props() -> html]
 const MOVES=[
-['drink',3200,'mv-tilt','Saúde! 🍻',()=>P('🍺','left:46%;top:56%;font-size:34px;animation:pdrink 3s ease-in-out forwards')],
-['smoke',3600,'mv-nod','Just one. For the nerves.',()=>P('🚬','left:48%;top:60%;font-size:24px;transform:rotate(-20deg);animation:pdab 3.2s ease-in-out infinite')+puffs(54,52,3)],
-['hiccup',2200,'mv-hic','…*hic*… sorry!',()=>P('HIC!','left:60%;top:2%;animation:pfade 1.9s ease-out forwards;color:#ffd400','t')+P('✨','left:8%;top:30%;font-size:16px;animation:pfade 1.9s .3s ease-out forwards')],
-['hairdryer',3400,'mv-hair','Hair is life, my friend.',()=>P('🔌','left:70%;top:50%;font-size:20px;display:none')+P('💨','left:2%;top:22%;font-size:20px;animation:pwind .7s linear infinite')+P('💨','left:-6%;top:40%;font-size:18px;animation:pwind .7s .25s linear infinite')+P('🌬️','left:70%;top:14%;font-size:34px;transform:scaleX(-1);animation:pbuzz .15s linear infinite')],
-['makeup',3600,'mv-tilt','Ready for the cameras.',()=>P('🪞','left:62%;top:58%;font-size:28px;animation:pbuzz 1s ease-in-out infinite')+P('💄','left:44%;top:50%;font-size:26px;animation:pdab 2.4s ease-in-out infinite')+P('','left:20%;top:50%;width:16%;height:10%;border-radius:50%;background:rgba(255,80,140,.55);animation:pdots 1s ease-in-out infinite')+P('','left:64%;top:50%;width:16%;height:10%;border-radius:50%;background:rgba(255,80,140,.55);animation:pdots 1s .3s ease-in-out infinite')],
-['powder',3000,'mv-nod','A little powder, a lot of attitude.',()=>P('🪭','left:60%;top:10%;font-size:28px;animation:pbuzz .5s ease-in-out infinite')+puffs(30,46,2).replace(/☁️/g,'✨')],
-['wig',4200,'mv-bop','New look. Who dis?',()=>{const k=pick(['','afro','bob','mohawk','rainbow']);const c=pick(wigs);return `<span class="wig ${k}" style="--wc:${c}"></span>`+P('💇','left:70%;top:2%;font-size:22px;animation:pfade 3.6s ease-out forwards')}],
-['shades',3600,'mv-bop','Too bright in here.',()=>P('🕶️','left:26%;top:30%;font-size:44px;animation:pglass 3.4s ease-out forwards')+P('🎵','left:78%;top:10%;font-size:20px;animation:ppuff 1.4s ease-out infinite')+P('🎶','left:2%;top:20%;font-size:18px;animation:ppuff 1.4s .6s ease-out infinite')],
-['phone',3400,'mv-nod','The club is trending!',()=>P('📱','left:56%;top:56%;font-size:34px;animation:pbuzz 1.4s ease-in-out infinite')+P('❤️','left:78%;top:34%;font-size:18px;animation:ppuff 1.2s ease-out infinite')+P('👍','left:84%;top:46%;font-size:16px;animation:ppuff 1.2s .5s ease-out infinite')],
-['coffee',3400,'mv-tilt','Third espresso. Or fifth.',()=>P('☕','left:46%;top:56%;font-size:32px;animation:pdrink 3.2s ease-in-out forwards')+P('♨️','left:60%;top:30%;font-size:18px;animation:psteam 1.5s ease-out infinite')],
-['yawn',3000,'mv-nod','So... sleepy...',()=>P('💤','left:70%;top:8%;font-size:22px;animation:ppuff 2s ease-out infinite')+P('💤','left:80%;top:18%;font-size:16px;animation:ppuff 2s .8s ease-out infinite')],
-['cash',3400,'mv-bop','Counting every cent.',()=>Array.from({length:5},(_,i)=>P(i%2?'💶':'💵',`left:${20+i*14}%;top:70%;font-size:22px;--dx:${(i-2)*14}px;--dr:${(i-2)*40}deg;animation:pflyc 1.6s ${i*.3}s ease-out infinite`)).join('')],
-['sneeze',2400,'mv-sneeze','Ah... ah... ACHOO!',()=>P('🤧','left:64%;top:6%;font-size:26px;animation:pfade 2.2s forwards')+P('💦','left:48%;top:62%;font-size:20px;animation:ppuff 1s 1s ease-out forwards')],
-['kebab',3400,'mv-chew','Dinner, finally.',()=>P('🌯','left:46%;top:56%;font-size:34px;animation:pdrink 3.2s ease-in-out forwards')],
-['gum',3400,'mv-nod','Pop!',()=>P('🫧','left:44%;top:56%;font-size:26px;animation:pgum 2.2s ease-in-out infinite')],
-['mic',3200,'mv-bop','Check, one, two...',()=>P('🎤','left:50%;top:56%;font-size:30px;animation:pbuzz .6s ease-in-out infinite')+P('🔊','left:78%;top:34%;font-size:20px;animation:pdots .8s ease-in-out infinite')],
-['party',3400,'mv-bop','Another one for the books!',()=>Array.from({length:6},(_,i)=>P(pick(['🎉','🎊','✨','⭐']),`left:${10+i*14}%;top:70%;font-size:18px;--dx:${(i-3)*12}px;--dr:${(i-3)*50}deg;animation:pflyc 1.5s ${i*.22}s ease-out infinite`)).join('')+P('🥳','left:62%;top:2%;font-size:24px;animation:pbuzz .4s linear infinite')],
-['vape',3200,'mv-nod','It is just steam, officer.',()=>P('💨','left:50%;top:52%;font-size:22px;animation:ppuff 1.8s ease-out infinite')+P('💨','left:42%;top:48%;font-size:30px;animation:ppuff 1.8s .8s ease-out infinite')],
+['drink',3200,'mv-tilt',['Saúde! 🍻','Cheers, my friend!','Only a little one...','To the night!'],()=>P(pick(['🍺','🍷','🥂','🍸','🍹','🥃','🧉']),'left:46%;top:56%;font-size:34px;animation:pdrink 3s ease-in-out forwards')],
+['smoke',3600,'mv-nod',['Just one. For the nerves.','Do not tell Esmeralda.','Smoke break!'],()=>P('🚬','left:48%;top:60%;font-size:24px;transform:rotate(-20deg);animation:pdab 3.2s ease-in-out infinite')+puffs(54,52,3+Math.floor(Math.random()*3))],
+['hiccup',2200,'mv-hic',['…*hic*… sorry!','Hic! Too much vinho.','Hic! Scare me!'],()=>P(pick(['HIC!','HIC!!','hic']),'left:60%;top:2%;animation:pfade 1.9s ease-out forwards;color:#ffd400','t')+P('🫧','left:8%;top:30%;font-size:16px;animation:pfade 1.9s .3s ease-out forwards')],
+['hairdryer',3400,'mv-hair',['Hair is life, my friend.','Blow-dry before the doors open.','Volume! More volume!'],()=>P('💨','left:2%;top:22%;font-size:20px;animation:pwind .7s linear infinite')+P('💨','left:-6%;top:40%;font-size:18px;animation:pwind .7s .25s linear infinite')+P('🌬️','left:70%;top:14%;font-size:34px;transform:scaleX(-1);animation:pbuzz .15s linear infinite')+P('✨','left:30%;top:0;font-size:16px;animation:pfade 1.2s .4s infinite')],
+['makeup',3600,'mv-tilt',['Ready for the cameras.','A touch of lipstick.','Concealer: my best friend.'],()=>P('🪞','left:62%;top:58%;font-size:28px;animation:pbuzz 1s ease-in-out infinite')+P('💄','left:44%;top:50%;font-size:26px;animation:pdab 2.4s ease-in-out infinite')+P('','left:20%;top:50%;width:16%;height:10%;border-radius:50%;background:rgba(255,80,140,.55);animation:pdots 1s ease-in-out infinite')+P('','left:64%;top:50%;width:16%;height:10%;border-radius:50%;background:rgba(255,80,140,.55);animation:pdots 1s .3s ease-in-out infinite')],
+['powder',3000,'mv-nod',['A little powder, a lot of attitude.','Shine control!'],()=>P('🪭','left:60%;top:10%;font-size:28px;animation:pbuzz .5s ease-in-out infinite')+puffs(30,46,2).replace(/☁️/g,'✨')],
+['wig',4200,'mv-bop',['New look. Who dis?','Is this wig on straight?','Wig night!','Trust me, it is natural.'],()=>{const k=pick(['','afro','bob','mohawk','rainbow','beehive']);return `<span class="wig ${k}" style="--wc:${pick(wigs)}"></span>`+P('💇','left:70%;top:2%;font-size:22px;animation:pfade 3.6s ease-out forwards')}],
+['shades',3600,'mv-bop',['Too bright in here.','Cool? Cool.','Incognito mode.'],()=>P('🕶️','left:26%;top:30%;font-size:44px;animation:pglass 3.4s ease-out forwards')+P('🎵','left:78%;top:10%;font-size:20px;animation:ppuff 1.4s ease-out infinite')+P('🎶','left:2%;top:20%;font-size:18px;animation:ppuff 1.4s .6s ease-out infinite')],
+['phone',3400,'mv-nod',['The club is trending!','Three new followers!','Reading the reviews...'],()=>P('📱','left:56%;top:56%;font-size:34px;animation:pbuzz 1.4s ease-in-out infinite')+P(pick(['❤️','🔥','💬']),'left:78%;top:34%;font-size:18px;animation:ppuff 1.2s ease-out infinite')+P('👍','left:84%;top:46%;font-size:16px;animation:ppuff 1.2s .5s ease-out infinite')],
+['coffee',3400,'mv-tilt',['Third espresso. Or fifth.','Coffee. Then more coffee.','Bica, por favor.'],()=>P(pick(['☕','🍵','🧋']),'left:46%;top:56%;font-size:32px;animation:pdrink 3.2s ease-in-out forwards')+P('♨️','left:60%;top:30%;font-size:18px;animation:psteam 1.5s ease-out infinite')],
+['yawn',3000,'mv-nod',['So... sleepy...','Is it Wednesday yet?','*yaaawn*'],()=>P('💤','left:70%;top:8%;font-size:22px;animation:ppuff 2s ease-out infinite')+P('💤','left:80%;top:18%;font-size:16px;animation:ppuff 2s .8s ease-out infinite')],
+['cash',3400,'mv-bop',['Counting every cent.','Money, money, money!','Where did the coins go?'],()=>Array.from({length:5},(_,i)=>P(i%2?'💶':'💵',`left:${20+i*14}%;top:70%;font-size:22px;--dx:${(i-2)*14}px;--dr:${(i-2)*40}deg;animation:pflyc 1.6s ${i*.3}s ease-out infinite`)).join('')],
+['sneeze',2400,'mv-sneeze',['Ah... ah... ACHOO!','Saúde! Oh, that was me.'],()=>P('🤧','left:64%;top:6%;font-size:26px;animation:pfade 2.2s forwards')+P('💦','left:48%;top:62%;font-size:20px;animation:ppuff 1s 1s ease-out forwards')],
+['eat',3400,'mv-chew',['Dinner, finally.','Bifana break!','Mmm... pastel de nata.'],()=>P(pick(['🌯','🥪','🍔','🌭','🥐','🍕','🥮']),'left:46%;top:56%;font-size:34px;animation:pdrink 3.2s ease-in-out forwards')],
+['gum',3400,'mv-nod',['Pop!','Bubble trouble.'],()=>P('🫧','left:44%;top:56%;font-size:26px;animation:pgum 2.2s ease-in-out infinite')],
+['mic',3200,'mv-bop',['Check, one, two...','Is this thing on?','Testing, testing!'],()=>P('🎤','left:50%;top:56%;font-size:30px;animation:pbuzz .6s ease-in-out infinite')+P('🔊','left:78%;top:34%;font-size:20px;animation:pdots .8s ease-in-out infinite')],
+['party',3400,'mv-bop',['Another one for the books!','Confetti time!'],()=>Array.from({length:6},(_,i)=>P(pick(['🎉','🎊','✨','⭐']),`left:${10+i*14}%;top:70%;font-size:18px;--dx:${(i-3)*12}px;--dr:${(i-3)*50}deg;animation:pflyc 1.5s ${i*.22}s ease-out infinite`)).join('')+P('🥳','left:62%;top:2%;font-size:24px;animation:pbuzz .4s linear infinite')],
+['vape',3200,'mv-nod',['It is just steam, officer.','Blueberry cloud!'],()=>P('💨','left:50%;top:52%;font-size:22px;animation:ppuff 1.8s ease-out infinite')+P('💨','left:42%;top:48%;font-size:30px;animation:ppuff 1.8s .8s ease-out infinite')],
+['news',3600,'mv-nod',['Boring. Where is the gossip?','Page 3 is about us!','Nothing but football.'],()=>P('📰','left:20%;top:34%;font-size:64px;animation:pbuzz 2s ease-in-out infinite')],
+['watch',3000,'mv-tilt',['Is it morning yet?','Time flies, money flies.','Late again, Esmeralda?'],()=>P('⌚','left:52%;top:58%;font-size:28px;animation:pdab 2.6s ease-in-out infinite')+P('⏰','left:74%;top:6%;font-size:22px;animation:pbuzz .12s linear infinite')],
+['selfie',3200,'mv-tilt',['Smile! Say Hard Club!','Selfie with the profit.','Good side, bad side...'],()=>P('🤳','left:58%;top:46%;font-size:36px;animation:pbuzz 1.2s ease-in-out infinite')+P('','left:0;top:0;width:100%;height:100%;border-radius:16px;background:#fff;opacity:0;animation:pflash 2.4s infinite')],
+['flex',3000,'mv-bop',['This is my gym.','Carrying the whole club.','Look at these arms!'],()=>P('💪','left:0;top:56%;font-size:34px;animation:pbuzz .5s ease-in-out infinite')+P('💪','left:70%;top:56%;font-size:34px;transform:scaleX(-1);animation:pbuzz .5s .2s ease-in-out infinite')],
+['kiss',2800,'mv-tilt',['Kisses for the crowd!','Muah!','Beijinho!'],()=>P('😘','left:66%;top:20%;font-size:28px;animation:pfade 2.4s forwards')+P('💋','left:60%;top:40%;font-size:20px;animation:ppuff 1.4s ease-out infinite')+P('❤️','left:80%;top:30%;font-size:16px;animation:ppuff 1.4s .6s ease-out infinite')],
+['laugh',2800,'mv-laugh',['Ha ha ha ha!','Oh, that was good!','I cannot breathe!'],()=>P('😂','left:62%;top:4%;font-size:26px;animation:pbuzz .2s linear infinite')+P('💦','left:14%;top:30%;font-size:16px;animation:ppuff 1s ease-out infinite')],
+['angry',2800,'mv-hair',['Who touched the thermostat?!','Where is my clipboard?!','NO standing on the speakers!'],()=>P('💢','left:62%;top:6%;font-size:30px;animation:pbuzz .15s linear infinite')+P('💢','left:8%;top:14%;font-size:20px;animation:pbuzz .12s linear infinite')],
+['call',3600,'mv-nod',['Alô? Yes, tonight is sold out!','Send more ice. NOW.','The DJ is late? Again?'],()=>P('📞','left:66%;top:34%;font-size:34px;animation:pbuzz .6s ease-in-out infinite')+P('💬','left:78%;top:12%;font-size:18px;animation:ppuff 1.6s ease-out infinite')],
+['nap',3600,'mv-drop',['Zzz... I am awake!','Five minutes...','Zzz... bifana... zzz...'],()=>P('💤','left:70%;top:6%;font-size:24px;animation:ppuff 1.8s ease-out infinite')+P('💤','left:82%;top:18%;font-size:16px;animation:ppuff 1.8s .8s ease-out infinite')],
+['bird',3400,'mv-slow',['A new fan!','Pombo! Get off my hair!','Even the birds like us.'],()=>P(pick(['🐦','🕊️','🦜']),'left:36%;top:-4%;font-size:30px;animation:pbird 3s ease-out forwards')+P('🎵','left:78%;top:8%;font-size:16px;animation:ppuff 1.4s .8s ease-out infinite')],
+['dance',3400,'mv-dance',['Nobody is watching... dance!','Boogie time!','Move it, move it!'],()=>P('🕺','left:70%;top:46%;font-size:30px;animation:pbuzz .5s linear infinite')+P('💃','left:-2%;top:46%;font-size:30px;animation:pbuzz .5s .25s linear infinite')+P('🎶','left:44%;top:0;font-size:20px;animation:ppuff 1.2s ease-out infinite')],
+['dj',3400,'mv-bop',['DJ Manager in the house!','Drop the bass!','This one is for you.'],()=>P('🎧','left:12%;top:-10%;font-size:70px;transform:none;animation:pfade 3.2s forwards')+P('🎵','left:80%;top:6%;font-size:18px;animation:ppuff 1.2s ease-out infinite')+P('🎶','left:4%;top:30%;font-size:18px;animation:ppuff 1.2s .5s ease-out infinite')],
+['zen',3600,'mv-slow',['Breathe... profit... breathe.','Ommm. Ommm. Invoice.'],()=>P('☮️','left:68%;top:6%;font-size:22px;animation:pbuzz 3s ease-in-out infinite')+P('✨','left:10%;top:20%;font-size:16px;animation:pfade 2s infinite')+P('✨','left:80%;top:40%;font-size:14px;animation:pfade 2s .8s infinite')],
 ];
 
 function run(root,quote0){
@@ -112,9 +145,9 @@ function run(root,quote0){
     MOVES.forEach(x=>box.classList.remove('mv-'+x[2].slice(3)));
     box.className='mgs '+m[2];
     pr.innerHTML=m[4]();
-    if(say)say.textContent=m[3];
-    const pic=box.querySelector('.pic');pic.style.animation='none';void pic.offsetWidth;pic.style.animation='';
-    setTimeout(()=>{if(!alive)return;pr.innerHTML='';box.className='mgs';if(say)say.textContent=quote0;setTimeout(next,500+Math.random()*900);},m[1]);
+    if(say)say.textContent=pick(m[3]);
+    const pic=box.querySelector('.hd');pic.style.animation='none';void pic.offsetWidth;pic.style.animation='';
+    setTimeout(()=>{if(!alive)return;pr.innerHTML='';box.className='mgs';if(say)say.textContent=quote0;setTimeout(next,Math.random()<.3?120:500+Math.random()*1300);},m[1]);
   };
   setTimeout(next,700);
   return ()=>{alive=false;};
@@ -138,8 +171,8 @@ window.showReport=showReport=function(){
   const mx=Math.max(1,...tiles.map(t=>Math.abs(t[3])));
   const fame=Object.keys(GEN).map(g=>`<span><b style="animation-delay:${Math.random()*2}s">${GEN[g].ic}</b>${Math.floor(S.fame[g])}</span>`).join('');
   const quote=net>0?'Fantastic night, my friend! Money, music, mayhem.':'Easy come, easy go, baby... we bleed tonight.';
-  $('nr').innerHTML=`<div class="rp">
-   <div class="rp-top"><div class="mgs">${av(MGN).replace("class='av'","class='pic'")}<div class="pr"></div></div>
+  $('nr').innerHTML=`<div class="rp"><div class="rp-bar"><span class="rp-grip"></span><button class="rp-x" aria-label="Close report">✕</button></div>
+   <div class="rp-top"><div class="mgs"><div class="hd">${av(MGN).replace("class='av'","class='pic'")}<i class="bl"></i><i class="bl r"></i></div><div class="pr"></div></div>
     <div class="rp-say"><small>Night manager</small><span class="tx">${quote}</span></div></div>
    <div class="rp-h"><img src='${LOGO_URL}'><h2 class="px">Night report · ${DN[dow()]}</h2></div>
    <div class="rp-net ${net<0?'neg':''}"><span class="ic">${net>0?'🤑':net<0?'😭':'😐'}</span><div class="lb">Net profit</div><div class="nv" id="rpnet">€0</div></div>
@@ -154,7 +187,19 @@ window.showReport=showReport=function(){
   setTimeout(()=>$('nr').querySelectorAll('.tl .bar i').forEach(b=>b.style.width=b.dataset.w+'%'),400);
   const tl=[...$('nr').querySelectorAll('.tl')];
   const pop=setInterval(()=>{if($('nr').style.display==='none'){clearInterval(pop);return;}const t=pick(tl);t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop');},1800);
-  $('nrb').onclick=()=>{stop();clearInterval(pop);$('nr').style.display='none';S.speed=S.rs;endDay();ui();};
+  let closed=false;const sheet=$('nr').firstElementChild;
+  const done=()=>{if(closed)return;closed=true;stop();clearInterval(pop);sheet.style.transform='';sheet.style.transition='';$('nr').style.display='none';S.speed=S.rs;endDay();ui();};
+  $('nrb').onclick=done;$('nr').querySelector('.rp-x').onclick=done;
+  let y0=null,dy=0,t0=0;
+  const start=y=>{y0=y;dy=0;t0=performance.now();sheet.style.transition='none';};
+  const move=y=>{if(y0==null)return;dy=Math.max(0,y-y0);sheet.style.transform='translateY('+dy+'px)';};
+  const end=()=>{if(y0==null)return;const fast=dy/(performance.now()-t0)>.6;y0=null;sheet.style.transition='transform .22s ease-out';if(dy>110||(fast&&dy>40)){sheet.style.transform='translateY(110%)';setTimeout(done,200);}else sheet.style.transform='';};
+  const bar=sheet.querySelector('.rp-bar');
+  bar.addEventListener('pointerdown',e=>{if(e.target.closest('.rp-x'))return;bar.setPointerCapture(e.pointerId);start(e.clientY);});
+  bar.addEventListener('pointermove',e=>move(e.clientY));bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+  sheet.addEventListener('touchstart',e=>{if(e.target.closest('.rp-bar')||sheet.scrollTop>0)return;start(e.touches[0].clientY);},{passive:true});
+  sheet.addEventListener('touchmove',e=>{if(y0==null)return;move(e.touches[0].clientY);if(dy>0)e.preventDefault();},{passive:false});
+  sheet.addEventListener('touchend',end);sheet.addEventListener('touchcancel',end);
   sfx(net>0?'goal':'bad');
 };
 })();
