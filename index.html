@@ -1433,15 +1433,19 @@ function heart(x,y,z){const h=HRT.find(q=>q.l<=0);if(!h)return;h.l=1.8;h.s.posit
 
 // ---- police station (lower level, south-east corner under the platform), car park entry/exit, road, phone box ----
 const yg=(x,z)=>gb(x,z);
-const POL={};{const x0=23.6,x1=29.6,z0=21.35,z1=22.8,yb=Hs(26.5),cx=(x0+x1)/2;
+const POL={};{const x0=23.6,x1=29.6,z0=-1.8,z1=-.35,yb=Hs(26.5),cx=(x0+x1)/2;
 bx(sc,x1-x0,1.2,z1-z0,cx,yb-.4,(z0+z1)/2,0x8e8a80);bx(sc,x1-x0,1.8,z1-z0,cx,yb+.8,(z0+z1)/2,0xe9e6dc);bx(sc,x1-x0+.2,.12,z1-z0+.2,cx,yb+1.75,(z0+z1)/2,0x6e6a62);
-bx(sc,x1-x0,.4,.08,cx,yb+1.45,z1+.03,0x1d3a8a,1);bx(sc,.9,1.15,.06,cx,yb+.78,z1+.03,0x1d2a5a,1);bx(sc,.7,.9,.07,cx,yb+.8,z1+.05,0x7fb4c4,1);
-for(const dx of [-2.1,-1.3,1.3,2.1])bx(sc,.55,.6,.06,cx+dx,yb+1.0,z1+.03,0x7fb4c4,1);
+bx(sc,x1-x0,.4,.08,cx,yb+1.45,z0-.03,0x1d3a8a,1);bx(sc,.9,1.15,.06,cx,yb+.78,z0-.03,0x1d2a5a,1);bx(sc,.7,.9,.07,cx,yb+.8,z0-.05,0x7fb4c4,1);
+for(const dx of [-2.1,-1.3,1.3,2.1])bx(sc,.55,.6,.06,cx+dx,yb+1.0,z0-.03,0x7fb4c4,1);
 for(const dx of [-2.9,2.9]){const m=new THREE.Mesh(gm(.3,.2,.3),new THREE.MeshBasicMaterial({color:0x3a6cff}));m.position.set(cx+dx,yb+1.95,(z0+z1)/2);sc.add(m);POL[dx<0?'l1':'l2']=m;}
-bx(sc,1.2,.12,.5,cx,yb+.2,z1+.3,0xb9b2a4,1);
-const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.38),new THREE.MeshBasicMaterial({map:cvx(64,10,q=>{pxl(q,'#1d3a8a',0,0,64,10);q.fillStyle='#ffffff';q.font='bold 8px monospace';q.textAlign='center';q.fillText('POLÍCIA',32,8);})}));sg.position.set(cx,yb+1.46,z1+.09);sc.add(sg);
-const cop=genChar('local','cop2',{top:'jacket',topc:'#1d3a7a',top2:'#ffffff',bot:'trousers',botc:'#1d2a4a',hat:'cap',hatc:'#1d3a7a',face:'sunglasses',hair:'short',hairc:'#3a2416',acc:'headset',shoe:'boots',shoec:'#111111',skin:'#efc08e'});cop.position.set(cx-1.6,yg(cx,23.3),23.2);sc.add(cop);POL.cop=cop;
-const pc=mkCar(0xf4f4f4);pc.position.set(31.2,Hs(31.2),24.05);sc.add(pc);bx(pc,1.22,.08,.62,0,.33,0,0x1d3a8a,1);const lb1=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0xff2020})),lb2=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0x2060ff}));lb1.position.set(-.1,.75,-.12);lb2.position.set(-.1,.75,.12);pc.add(lb1,lb2);POL.b1=lb1;POL.b2=lb2;}
+bx(sc,1.2,.12,.5,cx,yb+.2,z0-.3,0xb9b2a4,1);
+const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.38),new THREE.MeshBasicMaterial({map:cvx(64,10,q=>{pxl(q,'#1d3a8a',0,0,64,10);q.fillStyle='#ffffff';q.font='bold 8px monospace';q.textAlign='center';q.fillText('POLÍCIA',32,8);})}));sg.position.set(cx,yb+1.46,z0-.09);sg.rotation.y=Math.PI;sc.add(sg);
+const cop=genChar('local','cop2',{top:'jacket',topc:'#1d3a7a',top2:'#ffffff',bot:'trousers',botc:'#1d2a4a',hat:'cap',hatc:'#1d3a7a',face:'sunglasses',hair:'short',hairc:'#3a2416',acc:'headset',shoe:'boots',shoec:'#111111',skin:'#efc08e'});cop.position.set(cx-1.6,yg(cx,-2.3),-2.2);cop.rotation.y=Math.PI;sc.add(cop);POL.cop=cop;
+const pc=mkCar(0xf4f4f4);pc.position.set(31.2,Hs(31.2),-3.05);sc.add(pc);bx(pc,1.22,.08,.62,0,.33,0,0x1d3a8a,1);const lb1=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0xff2020})),lb2=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0x2060ff}));lb1.position.set(-.1,.75,-.12);lb2.position.set(-.1,.75,.12);pc.add(lb1,lb2);POL.b1=lb1;POL.b2=lb2;}
+
+// Esmeralda, the day manager: black hair, super stylish, very bossy
+const ESM=genChar('manager','esmeralda',{top:'jacket',topc:'#b3122e',top2:'#111111',bot:'trousers',botc:'#111111',hat:'none',hair:'long',hairc:'#050507',skin:'#e6b48c',face:'none',acc:'bag',accc:'#111111',shoe:'boots',shoec:'#111111',sl:1});ESM.scale.setScalar(1.05);ESM.position.set(22.5,0,10.6);ESM.visible=false;sc.add(ESM);
+const EM={tx:22.5,tz:10.6,w:0,say:0,ph:'',list:null,pose:0};
 // car park (underground): exit at the north end of the road beside the square, entrance at the south-west bottom of the square
 function portal(zc,label,col){const yb=Hs(32.1),g=new THREE.Group();bx(g,1.9,.04,2.1,0,.03,0,0x16161b,1);bx(g,.22,.8,2.2,-1.0,.4,0,0xb9b2a4);bx(g,.22,.8,2.2,1.0,.4,0,0xb9b2a4);bx(g,2.2,.25,.5,0,.85,-.9,0xa39d90);
 for(let i=0;i<5;i++)bx(g,.38,.03,.2,-.8+i*.4,.06,1.0,i%2?0xf2c94c:0x222222,1);bx(g,.06,1.5,.06,1.15,.75,1.05,0x555555);
@@ -1495,6 +1499,16 @@ for(const q of HRT){if(q.l>0){q.l-=dt;q.s.position.y+=dt*.7;q.s.material.opacity
 const fl=Math.floor(t*4)%2;POL.b1.material.color.setHex(fl?0xff2020:0x330808);POL.b2.material.color.setHex(fl?0x082033:0x2060ff);const lp=Math.floor(t*2)%2;POL.l1.material.color.setHex(lp?0x3a6cff:0x1a2f77);POL.l2.material.color.setHex(lp?0x1a2f77:0x3a6cff);
 {const c=POL.cop;c.visible=true;c.hd.rotation.y=Math.sin(t*.5)*.8;c.ar.rotation.x=Math.floor(t/7)%3===0?-1.9+Math.sin(t*3)*.1:-.2;}
 parkAnim2(rt);
+{const m=ESM,dayE=S.ph==='setup'||S.ph==='day'||S.ph==='changeover';m.visible=dayE;if(dayE){const dd=(S.speed?S.speed/2:0)*rt;
+if(EM.ph!==S.ph){EM.ph=S.ph;EM.w=0;EM.say=1;EM.pose=S.ph==='setup'?1:S.ph==='changeover'?2:0;
+bubble(S.ph==='setup'?'Bom dia! Montem\nas bancas, JÁ!':S.ph==='changeover'?'FECHOU! Arrumem\ntudo e limpem!':'Esmeralda manda\nneste mercado!',0,0,2.6,'say',m,3.2);}
+EM.w-=dd;if(EM.w<=0){EM.w=3+Math.random()*4;const L=[...stalls.values()].filter(q=>q.m.visible);const r=Math.random();
+if(r<.25){const b=RM[Math.random()<.5?0:1].m;if(b.visible){EM.tx=b.position.x-1.2;EM.tz=b.position.z;if(Math.random()<.8)bubble(['Ei! Circula daqui!\nRegras são regras!','Você aí! Sem\nbarulho aqui!','Não se encosta\nnas bancas!'][Math.floor(Math.random()*3)],0,0,2.6,'say',m,3);}}
+else if(L.length){const q=L[Math.floor(Math.random()*L.length)];EM.tx=q.m.position.x+1.1;EM.tz=q.m.position.z+.4;if(Math.random()<.6)bubble(S.ph==='setup'?['Mais rápido!\nAbre essa banca!','Quem montou isto?\nEstá torto!'][Math.floor(Math.random()*2)]:S.ph==='changeover'?['Fecha a banca!\nTudo limpo!','Quero o lixo\nfora, já!'][Math.floor(Math.random()*2)]:['Sorri aos clientes!\nPreços à vista!','Banca suja?\nEu vi isso!','Sem fumar aqui\ndentro!','Cães ao colo,\nnão ao chão!'][Math.floor(Math.random()*4)],0,0,2.6,'say',m,3);}
+else{EM.tx=22.5;EM.tz=10.6;}}
+const dd2=mvTo(m,EM.tx,EM.tz,1.1*dd);m.position.y=gy(m.position.x,m.position.z);const mv=dd2&&dd>0;swing(m,mv?Math.sin(t*7)*.7:0);
+if(!mv&&m.hd){m.hd.rotation.y=Math.sin(t*1.3)*.5;const sh=Math.floor(t/5)%3===0;m.ar.rotation.x=sh?-2.6+Math.sin(t*14)*.35:-.9;m.al.rotation.x=sh?-.2:-1.1;}}}
+
 // phone box
 {const g=PHB.g;if(PHB.st===0){PHB.cd-=dm;g.rotation.z=0;if(day&&PHB.cd<=0&&h>=10&&h<18.5){PHB.st=1;PHB.t=0;bubble('☎ Brrring!\nBrrring!',43.6,20.1,2.6,'say');}}
 else if(PHB.st===1){PHB.t+=rt;g.rotation.z=Math.sin(t*40)*.04;if(Math.floor(PHB.t*1.5)>Math.floor((PHB.t-rt)*1.5))sfx('coin');if(PHB.t>2.5){PHB.st=2;PHB.t=0;g.rotation.z=0;CALLER.visible=true;CALLER.position.set(39,gb(39,18.6),18.6);}}
