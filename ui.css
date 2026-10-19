@@ -194,3 +194,9 @@ body.u2 .sh-head h2{color:var(--pc)}
 body.u2 .sh-head h2::before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--pc);margin-right:8px;vertical-align:-1px}
 .mrow{border-left:6px solid var(--mc,var(--ln))}
 @media (min-width:860px),(orientation:landscape) and (max-height:540px){body.u2 #dock{border-left-color:var(--pc)}}
+
+
+/* night report tiles */
+body.u2 #nr>div{max-width:480px}
+body.u2 #nr .rp-say{font-size:13px}
+body.u2 #nr .tl .nv{font-size:22px}
