@@ -7,7 +7,7 @@ const E=id=>document.getElementById(id),B=document.body;
 if(!E('dock')||!E('hud')||!E('tabs'))return;
 B.classList.add('u2');
 window.BMODE=false;
-const stage=E('stage'),dock=E('dock'),tabs=E('tabs'),hud=E('hud');
+const LOGO=E('logoimg'),stage=E('stage'),dock=E('dock'),tabs=E('tabs'),hud=E('hud');
 const mk=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
 const vib=p=>{try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}};
 const panelMode=()=>matchMedia('(min-width:860px),(orientation:landscape) and (max-height:540px)').matches;
@@ -28,7 +28,7 @@ function moreRows(){
   const acc=window.mfbAccount;
   const rows=[['tg','🧭','View & places','Camera presets, rooms, top view, minimap','#4aa3ff'],['ti','📊','Venue info','Capacity, storage, queues and limits','#2cc3c3'],['ts','⚙️','Settings','Sound, graphics, crowd and labels','#8d93a8'],['acc','👤',acc?acc.title():'Account & saves',acc?acc.sub():'Guest','#ec5fa3'],['leg','📜','Privacy & terms','How your data is handled','#9b6bff']];
   tm.innerHTML='';
-  const logo=mk('div','','');logo.style.cssText='display:flex;justify-content:center;padding:4px 0 12px';const li=E('logoimg');li.style.height='26px';logo.appendChild(li);tm.appendChild(logo);
+  const logo=mk('div','','');logo.style.cssText='display:flex;justify-content:center;padding:4px 0 12px';LOGO.style.height='26px';logo.appendChild(LOGO);tm.appendChild(logo);
   for(const [id,ic,t,s,col] of rows){const b=mk('button','mrow','<span class="ic">'+ic+'</span><span><b></b><small></small></span><span class="ch">›</span>');b.style.setProperty('--mc',col);b.querySelector('b').textContent=t;b.querySelector('small').textContent=s;
     b.onclick=()=>{vib(8);if(id==='acc'){if(acc)acc.menu();}else if(id==='leg')window.open('legal.html#privacy','_blank','noopener');else openPane(id);};tm.appendChild(b);}
 }
