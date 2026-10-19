@@ -124,7 +124,7 @@ body.bm #pbar{display:flex}
 #pbar #pbx{background:var(--ac);color:#fff;border-color:var(--ac)}
 
 /* ---------- stall sheet ---------- */
-body.u2 #spn{position:fixed;left:0;right:0;top:auto;bottom:calc(var(--nav-h) + var(--sab));width:auto;max-width:none;max-height:62dvh;z-index:26;padding:0 10px 12px;border-radius:18px 18px 0 0;background:var(--pn);border-top:2px solid var(--ln);box-shadow:0 -10px 30px rgba(0,0,0,.5);overflow:auto;overscroll-behavior:contain;font-size:12px;animation:sup .25s cubic-bezier(.2,.8,.2,1)}
+body.u2 #spn{position:fixed;left:0;right:0;top:auto;bottom:calc(var(--nav-h) + var(--sab));width:auto;max-width:none;max-height:54dvh;z-index:26;padding:0 10px 12px;border-radius:18px 18px 0 0;background:var(--pn);border-top:2px solid var(--ln);box-shadow:0 -10px 30px rgba(0,0,0,.5);overflow:auto;overscroll-behavior:contain;font-size:12px;animation:sup .25s cubic-bezier(.2,.8,.2,1)}
 @keyframes sup{from{transform:translateY(40%);opacity:.4}}
 body.u2 #spn::before{content:'';display:block;width:44px;height:5px;border-radius:3px;background:var(--mut);opacity:.6;margin:8px auto 8px}
 body.u2 #spn .p{box-shadow:none;border-radius:12px}
@@ -139,7 +139,8 @@ body.u2 #acm .b{min-height:48px;border-radius:12px}
 body.u2 #nr p,body.u2 #end p{font-family:system-ui,sans-serif;font-size:14px}
 
 /* coach tip */
-#coach{position:fixed;z-index:31;left:50%;bottom:calc(var(--nav-h) + var(--sab) + 10px);transform:translateX(-50%);background:var(--br);color:#1b1b2f;border-radius:12px;padding:8px 12px;font:700 12px system-ui,sans-serif;max-width:86vw;box-shadow:0 4px 14px rgba(0,0,0,.45);animation:dp 1.6s ease-in-out infinite;display:none;text-align:center}
+#coach{position:fixed;z-index:31;left:0;right:0;margin:0 auto;width:fit-content;bottom:calc(var(--nav-h) + var(--sab) + 10px);background:var(--br);color:#1b1b2f;border-radius:12px;padding:8px 12px;font:700 12px system-ui,sans-serif;max-width:86vw;box-shadow:0 4px 14px rgba(0,0,0,.45);animation:cp 1.6s ease-in-out infinite;display:none;text-align:center}
+@keyframes cp{50%{transform:translateY(-5px)}}
 #coach.on{display:block}
 
 /* ---------- side-panel mode: tablets, desktop, landscape phones ---------- */
@@ -166,7 +167,7 @@ body.u2 #nr p,body.u2 #end p{font-family:system-ui,sans-serif;font-size:14px}
   body.u2 #nr,body.u2 #end,body.u2 #acm{align-items:center;padding:16px}
   body.u2 #nr>div,body.u2 #end>div,body.u2 #acm>div{border-radius:18px;border-width:3px;max-width:440px}
   #toasts{right:auto;left:12px;align-items:flex-start;max-width:520px}
-  #coach{left:12px;transform:none;bottom:calc(var(--nav-h) + 24px)}
+  #coach{left:12px;right:auto;margin:0;bottom:calc(var(--nav-h) + 24px)}
 }
 @media (min-width:860px){
   body.u2 #cards{grid-template-columns:repeat(2,minmax(0,1fr))}
