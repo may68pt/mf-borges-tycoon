@@ -1,5 +1,5 @@
 /* time-of-day themes: warm daytime paper, neon night */
-body.u2[data-tod=day]{--bg:#cfe3ee;--pn:#f6ecd4;--ink:#2b2433;--mut:#6c6174;--ac:#e2592a;--br:#c78f2a;--ln:#7a5a3a;--ov:36,26,50;color-scheme:light}
+body.u2[data-tod=day]{--bg:#0c0e18;--pn:#1b1b2f;--ink:#f1ecdf;--mut:#9a9ab5;--ac:#ff5a43;--br:#f2c94c;--ln:#4a4a70;--ov:10,12,28;color-scheme:dark}
 body.u2[data-tod=night]{--bg:#0c0e18;--pn:#1b1b2f;--ink:#f1ecdf;--mut:#9a9ab5;--ac:#ff5a43;--br:#f2c94c;--ln:#4a4a70;--ov:10,12,28;color-scheme:dark}
 /* scenic pixel-art sheets under a dark overlay */
 body.u2 #dock{background:linear-gradient(180deg,rgba(var(--ov),.5) 0,rgba(var(--ov),.55) 110px,color-mix(in srgb,var(--pn) 78%,transparent) 260px,var(--pn) 400px),var(--sc-tm) top/100% auto no-repeat,var(--pn)}
@@ -80,3 +80,8 @@ body.u2 #upg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 #gmp .gr{flex:1 1 auto;min-height:0}
 body.u2 .gm-opt.on,body.u2 .gm-opt.on small{color:var(--ink)}
 .gm-room.empty .gr-ic{font:900 52px/1 system-ui,sans-serif;color:#fff;opacity:.7}
+
+/* always dark; the scenes animate (frames from scenes.js) and the sheet backdrop drifts slowly */
+@keyframes scdrift{from{background-position:0 0,0% 0}to{background-position:0 0,100% 0}}
+body.u2 #dock{background-size:100% 100%,114% auto;animation:scdrift 80s ease-in-out infinite alternate}
+@media (prefers-reduced-motion:reduce){body.u2 #dock{animation:none}}
