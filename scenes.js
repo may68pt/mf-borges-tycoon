@@ -9,15 +9,22 @@ const R=(g,c,x,y,w,h)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Mat
 const P=(g,c,x,y)=>R(g,c,x,y,1,1);
 const BAY=[.12,.62,.87,.37];
 let FR=0; // animation frame 0-3: twinkle, shimmer, sway, flicker
+let CUR='day',SK={q:5,ss:0};
+// the sun follows the clock: 10 steps along an arc from morning to late afternoon, then a 5-stage sunset in the last hour before closing
+const SUNSKY=[['#4d8fd0','#e9b27a','#ffd08a','#ffe2a0'],['#5a7fc0','#f09a62','#ffb56a','#ffd08a'],['#5a68b0','#e0705a','#ff9a55','#ffc06a'],['#3f4a98','#b8527a','#f2704f','#ff9a4f'],['#1f2766','#6a3a88','#c04f6a','#ff7a4a']];
+function curKey(){try{if(typeof S==='undefined'||!S||(S.ph!=='day'&&S.ph!=='setup'))return{q:5,ss:0};const h=S.t/60,cl=(typeof CLOSE==='number'?CLOSE:20);if(h>=cl-1)return{q:9,ss:Math.max(1,Math.min(5,1+Math.floor((h-(cl-1))*5)))};return{q:Math.max(0,Math.min(9,Math.floor((h-9)/(cl-10)*10))),ss:0};}catch(e){return{q:5,ss:0};}}
+const kk=k=>k.ss?'s'+k.ss:'q'+k.q;
 function hex(c){return[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];}
 // vertical gradient with ordered dithering between the stops (the classic adventure-game sky)
-function grad(g,stops,y0,y1){const n=stops.length-1,col=stops.map(hex);const im=g.createImageData(W,y1-y0);
+function grad(g,stops,y0,y1){if(y0===0&&CUR==='day'&&SK.ss)stops=SUNSKY[SK.ss-1];const n=stops.length-1,col=stops.map(hex);const im=g.createImageData(W,y1-y0);
   for(let y=0;y<y1-y0;y++){const t=y/(y1-y0-1)*n,i=Math.min(n-1,Math.floor(t)),f=t-i;for(let x=0;x<W;x++){const th=BAY[(x&1)+((y&1)<<1)],c=f>th?col[i+1]:col[i],k=(y*W+x)*4;im.data[k]=c[0];im.data[k+1]=c[1];im.data[k+2]=c[2];im.data[k+3]=255;}}
   g.putImageData(im,0,y0);}
 function stars(g,r,n,ymax){for(let i=0;i<n;i++){const x=r()*W|0,y=r()*ymax|0,b=r();P(g,((i+FR)%4===0)?'#4a5090':(b>.8?'#ffffff':b>.4?'#cfd6ff':'#8a93d6'),x,y);if(b>.93&&(i+FR)%4!==0){P(g,'#9aa6ff',x-1,y);P(g,'#9aa6ff',x+1,y);P(g,'#9aa6ff',x,y-1);P(g,'#9aa6ff',x,y+1);}}}
 function disc(g,c,cx,cy,r){for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)if(x*x+y*y<=r*r+r*.6)P(g,c,cx+x,cy+y);}
 function glow(g,rgb,cx,cy,r,a){for(let k=r;k>0;k-=2){g.fillStyle='rgba('+rgb+','+(a*(1-k/r)+.02)+')';for(let y=-k;y<=k;y++)for(let x=-k;x<=k;x++)if(x*x+y*y<=k*k&&((x+y)&1)==0)g.fillRect(cx+x,cy+y,1,1);}}
-function sun(g,tod,x,y){if(tod==='day'){glow(g,'255,230,150',x,y,22,.3);disc(g,'#fff3b0',x,y,6);disc(g,'#ffe27a',x,y,4);}else{glow(g,'190,205,255',x,y,16,.25);disc(g,'#f4f1dc',x,y,5);P(g,'#cfcdb8',x-2,y-1);P(g,'#cfcdb8',x+1,y+2);P(g,'#cfcdb8',x+2,y-2);}}
+function sun(g,tod,x,y){if(tod==='day'){const s=SK.ss,q=SK.q,sx=s?92+s*4:12+(q+.5)*8.4,sy=s?[72,76,81,87,93][s-1]:80-62*Math.sin(Math.PI*(q+.5)/10);
+    const gc=s?['255,200,120','255,170,90','255,130,70','255,90,70','255,70,80'][s-1]:'255,230,150',d1=s?['#ffe9a0','#ffd080','#ffb060','#ff8050','#ff5a55'][s-1]:'#fff3b0',d2=s?['#ffd860','#ffb040','#ff9040','#ff6040','#e03a50'][s-1]:'#ffe27a';
+    glow(g,gc,sx,sy,s?26+s*2:22,s?.4:.3);disc(g,d1,sx,sy,s?7:6);disc(g,d2,sx,sy,s?5:4);}else{glow(g,'190,205,255',x,y,16,.25);disc(g,'#f4f1dc',x,y,5);P(g,'#cfcdb8',x-2,y-1);P(g,'#cfcdb8',x+1,y+2);P(g,'#cfcdb8',x+2,y-2);}}
 function clouds(g,r,tod,n,ymax){const c=tod==='day'?['#ffffff','#dcebf7']:['#2c3566','#1d2550'];for(let i=0;i<n;i++){const x=r()*W|0,y=8+r()*ymax|0,w=10+r()*16|0;R(g,c[0],x,y,w,2);R(g,c[0],x+3,y-1,w-8,1);R(g,c[1],x+1,y+2,w-3,1);}}
 const LET={H:['101','101','111','101','101'],A:['010','101','111','101','101'],R:['110','101','110','101','101'],D:['110','101','101','101','110'],C:['011','100','100','100','011'],L:['100','100','100','100','111'],U:['101','101','101','101','111'],B:['110','101','110','101','110']};
 function word(g,s,x,y,c,sc){let cx=x;for(const ch of s){const m=LET[ch];if(!m){cx+=3*sc;continue;}for(let j=0;j<5;j++)for(let i=0;i<3;i++)if(m[j][i]==='1')R(g,c,cx+i*sc,y+j*sc,sc,sc);cx+=4*sc;}return cx;}
@@ -31,7 +38,7 @@ function house(g,r,tod,x,y,w,h,wall,roof,opt){opt=opt||{};const night=tod==='nig
   if(opt.door)R(g,'#3b2a20',x+(w>>1)-1,y+h-5,3,5);}
 function cobbles(g,r,tod,y0,base){const a=tod==='day'?['#8c7b6a','#a8957f','#6f5f52']:['#1d1b2a','#2a2740','#14121f'];R(g,base||a[0],0,y0,W,H-y0);
   for(let y=y0;y<H;y+=3){const off=((y-y0)/3|0)%2*3;for(let x=-off;x<W;x+=6){R(g,r()>.5?a[1]:a[2],x+1,y,4,1);}}for(let i=0;i<30;i++)P(g,a[1],r()*W|0,y0+r()*(H-y0)|0);}
-function lamp(g,tod,x,y,h){R(g,'#22222c',x,y,1,h);R(g,'#22222c',x-1,y,3,1);R(g,tod==='night'?'#ffe9a8':'#cfd3da',x-1,y-3,3,3);if(tod==='night')glow(g,'255,220,140',x,y-2,11,.22+.08*((FR+x)%2));}
+function lamp(g,tod,x,y,h){const lit=tod==='night'||(SK.ss>=4);R(g,'#22222c',x,y,1,h);R(g,'#22222c',x-1,y,3,1);R(g,lit?'#ffe9a8':'#cfd3da',x-1,y-3,3,3);if(lit)glow(g,'255,220,140',x,y-2,11,.22+.08*((FR+x)%2));}
 function bunting(g,r,x0,x1,y,sag){const cs=['#e5442f','#f2c94c','#2fbf71','#35b6ff','#ec5fa3'];let k=0;for(let x=x0;x<=x1;x++){const t=(x-x0)/(x1-x0),yy=y+Math.round(Math.sin(t*Math.PI)*sag);P(g,'#2a2230',x,yy);if((x-x0)%5===2){const c=cs[k++%cs.length];R(g,c,x-1,yy+1,3,1);R(g,c,x,yy+2,1,2);}}}
 function crowd(g,r,y,color,n,hands){for(let i=0;i<n;i++){const x=(i*(W/n)-3+r()*5)|0,hh=4+r()*4|0;R(g,color,x-1,y-hh+3,9,hh+40);R(g,color,x+1,y-hh-1,5,5);if(hands&&r()>.5){const up=4+(r()*5|0)+((FR+i)%2);R(g,color,x-1,y-hh-up,1,up+3);P(g,color,x-2,y-hh-up-1);if(r()>.5){R(g,color,x+7,y-hh-up+1,1,up+2);P(g,color,x+8,y-hh-up);}}}}
 function people(g,x,y,c){R(g,c,x,y-6,3,6);R(g,c,x,y-9,3,3);R(g,'#e6b48c',x,y-9,3,2);}
@@ -171,8 +178,8 @@ function quay(tod){const r=rng(67),[c,g]=mk(),night=tod==='night';
 
 const SC={tb:market,tq:ribeira,tn:club,ta:stage,tm:quay};
 const cache={};let curTod='day',fr=0,tm=0;
-function render(id,tod,f){FR=f;try{return SC[id](tod);}finally{FR=0;}}
-function url(id,tod,f){f=f||0;const k=id+tod+f;return cache[k]||(cache[k]='url('+render(id,tod,f).toDataURL('image/png')+')');}
+function render(id,tod,f,k){FR=f;CUR=tod;SK=k||curKey();try{const c=SC[id](tod);if(tod==='day'&&SK.ss){const g=c.getContext('2d'),T=[['255,150,60',.06],['255,120,50',.1],['230,80,60',.15],['170,60,110',.2],['60,30,110',.28]][SK.ss-1];g.fillStyle='rgba('+T[0]+','+T[1]+')';g.fillRect(0,0,W,H);}return c;}finally{FR=0;}}
+function url(id,tod,f){f=f||0;const sk=tod==='day'?curKey():{q:0,ss:0},k=id+tod+kk(sk)+f;return cache[k]||(cache[k]='url('+render(id,tod,f,sk).toDataURL('image/png')+')');}
 function apply(tod){curTod=tod;const root=document.documentElement;for(const id of Object.keys(SC))root.style.setProperty('--sc-'+id,url(id,tod,fr));root.style.setProperty('--sc-nr',url('tn','night',fr));root.dataset.sc=tod;start();}
 // gentle animation: only the scene on screen is advanced (twinkling stars, water shimmer, neon flicker, swaying beams)
 function tick(){fr=(fr+1)%4;const root=document.documentElement,dock=document.getElementById('dock'),gmp=document.getElementById('gmp'),nr=document.getElementById('nr'),ids=new Set();
