@@ -40,7 +40,7 @@ function setSheet(s){
   dock.setAttribute('aria-hidden',s==='closed'?'true':'false');syncNav();
 }
 function openPane(id,state){
-  cur=id;
+  cur=id;co.classList.remove('on');
   if(id in tabIdx)tabs.children[tabIdx[id]].click();
   for(const k of ORIG)E(k).hidden=k!==id;
   tm.hidden=id!=='tm';ti.hidden=id!=='ti';
@@ -120,7 +120,7 @@ const pb=mk('div','','<span class="pi" id="pbi"></span><div class="pt"><b id="pb
 function pbUpdate(){if(!window.BMODE)return;const d=ST[S.sel];if(!d)return;E('pbi').textContent=d[12];E('pbn').textContent=d[0];
   const ok=S.cash>=d[6]&&S.lv>=d[10],c=E('pbc');c.className=ok?'':'bad';
   c.textContent=(S.lv<d[10]?'Locked until level '+d[10]:'€'+d[6]+(S.cash<d[6]?' - not enough cash':'')+' · facing '+FACE[(S.brot||0)%4]+' · tap a free tile');}
-function enterBM(){window.BMODE=true;B.classList.add('bm');if(!panelMode())setSheet('closed');pbUpdate();}
+function enterBM(){co.classList.remove('on');window.BMODE=true;B.classList.add('bm');if(!panelMode())setSheet('closed');pbUpdate();}
 function exitBM(){window.BMODE=false;B.classList.remove('bm');}
 E('pbx').onclick=()=>{vib(8);exitBM();};
 E('pbr').onclick=()=>{vib(8);S.brot=((S.brot||0)+1)%4;pbUpdate();};
