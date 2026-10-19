@@ -74,3 +74,9 @@ body.u2 #upg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .gm-card.poor small{color:#ff9a8a}
 @media (min-width:860px),(orientation:landscape) and (max-height:540px){#gmp{align-items:center}#gmp>div{border-radius:18px;border:3px solid var(--br);max-width:620px}#gmp .gr{grid-template-columns:repeat(3,1fr)}}
 @media (prefers-reduced-motion:reduce){.gm-room .gr-ic{animation:none}}
+
+/* fixes */
+#gmp .ph,#gmp .fl{flex:none}
+#gmp .gr{flex:1 1 auto;min-height:0}
+body.u2 .gm-opt.on,body.u2 .gm-opt.on small{color:var(--ink)}
+.gm-room.empty .gr-ic{font:900 52px/1 system-ui,sans-serif;color:#fff;opacity:.7}
