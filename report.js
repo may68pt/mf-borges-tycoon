@@ -7,9 +7,9 @@ const css=`
 #nr .mgs .pic{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);image-rendering:pixelated;border:0;border-radius:10px;transform-origin:50% 90%}
 #nr .mgs .pr{position:absolute;inset:0;pointer-events:none}
 #nr .mgs .pr>*{position:absolute;line-height:1;transform-origin:50% 50%}
-#nr .rp-say{position:relative;flex:1;min-height:60px;background:#fff;color:#1b1b2f;border-radius:14px;padding:10px 12px;font:600 13px/1.35 system-ui,sans-serif;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+#nr .rp-say{position:relative;flex:1;min-height:60px;background:#fff;color:#1b1b2f;border-radius:14px;padding:12px 14px;font:900 20px/1.2 system-ui,sans-serif;letter-spacing:-.01em;box-shadow:0 3px 0 rgba(0,0,0,.3)}
 #nr .rp-say:before{content:"";position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
-#nr .rp-say small{display:block;color:#7a7a90;font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+#nr .rp-say small{display:block;color:#7a7a90;font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
 #nr .rp-h{display:flex;align-items:center;gap:8px;margin:6px 0 8px}#nr .rp-h img{height:20px;image-rendering:pixelated}
 #nr .rp-h h2{margin:0;font-size:12px;flex:1}
 #nr .rp-net{position:relative;overflow:hidden;border-radius:18px;padding:14px 12px;text-align:center;color:#fff;background:linear-gradient(135deg,#1f9d5c,#2fbf71);border:2px solid rgba(255,255,255,.25)}
