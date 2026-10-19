@@ -198,5 +198,5 @@ body.u2 .sh-head h2::before{content:'';display:inline-block;width:10px;height:10
 
 /* night report tiles */
 body.u2 #nr>div{max-width:480px}
-body.u2 #nr .rp-say{font-size:13px}
+body.u2 #nr .rp-say{font-size:20px}
 body.u2 #nr .tl .nv{font-size:22px}
