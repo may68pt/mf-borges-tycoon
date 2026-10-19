@@ -200,3 +200,14 @@ body.u2 .sh-head h2::before{content:'';display:inline-block;width:10px;height:10
 body.u2 #nr>div{max-width:480px}
 body.u2 #nr .rp-say{font-size:20px}
 body.u2 #nr .tl .nv{font-size:22px}
+
+/* compact header: less vertical room */
+body.u2 #hud{top:calc(var(--sat) + 4px);gap:3px}
+body.u2 #hud>.p{padding:3px 7px;font-size:10.5px;line-height:1.15;border-radius:8px}
+body.u2 #hud>.p:nth-child(2){font-size:11px;line-height:1.2}
+body.u2 #hud>#cc{font-size:12px}
+body.u2 #hud>.p:nth-child(n+4){flex-direction:row;align-items:center;gap:5px;white-space:nowrap}
+body.u2 #hud>.p:nth-child(n+4) .bar{flex:1;width:auto;height:5px;margin:0}
+body.u2 #spd{font-size:12px}
+body.u2 #msgw{padding:3px 8px;font-size:11px}
+body.u2 #toasts{top:calc(var(--tick,92px) + 38px)}
