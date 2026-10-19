@@ -7,7 +7,7 @@ const ANI=['✖','\u{1F5FF}','\u{1F939}','\u{1F9F8}','\u{1F3A9}','\u{1F574}️',
 const DAYI={none:'✖',fado:'\u{1F3BB}',samba:'\u{1F941}',folk:'\u{1F483}'};
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
 const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const pick=(sel,v)=>{if(!sel)return;sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}));try{if(window.sfx)sfx('coin');if(navigator.vibrate)navigator.vibrate(8);}catch(e){}};
+const pick=(sel,v)=>{if(!sel)return;sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}));try{if(typeof sfx==='function')sfx('coin');if(navigator.vibrate)navigator.vibrate(8);}catch(e){}};
 const ok=()=>{try{return !!(S&&AC&&GEN&&TIERS&&BT&&BTC&&DN);}catch(e){return false;}};
 const night=()=>ok()&&(S.ph==='night'||S.ph==='end'||S.ph==='changeover');
 
@@ -59,11 +59,11 @@ function renderP(){if(!picker)return;const s=$$('a'+pickR);if(!s)return;
       b.onclick=()=>{if(lock){try{toast(i.band?'This band is not unlocked yet.':'Needs '+i.u+' '+(GEN[i.g]||{}).n+' fame.','\u{1F512}');}catch(e){}return;}pick(s,i.v);closeP();};gr.appendChild(b);});}
   gr.scrollTop=keep;}
 
-function roomCard(r){const s=$$('a'+r),v=s?s.value:'none',i=info(v),shut=window.dbl&&!dbl()&&S.act[3-r]&&S.act[3-r]!=='none';
+function roomCard(r){const s=$$('a'+r),v=s?s.value:'none',i=info(v),shut=typeof dbl==='function'&&!dbl()&&S.act[3-r]&&S.act[3-r]!=='none';
   const b=el('button','gm-room'+(i?'':' empty')+(shut?' shut':''));b.type='button';
   const cap=r===1?1000:350;
   if(i){b.style.setProperty('--gc',i.col);b.style.setProperty('--tc',i.tc);b.innerHTML='<span class="gr-t">Room '+r+'<small>\u{1F3DF} '+cap+'</small></span><span class="gr-ic">'+i.ic+'</span><span class="gr-n">'+esc(i.name)+'</span><span class="gr-s"><i>'+esc(i.tier)+'</i>€'+i.cost+'</span><span class="gr-cta">Change ▸</span>';}
-  else b.innerHTML='<span class="gr-t">Room '+r+'<small>\u{1F3DF} '+cap+'</small></span><span class="gr-ic">➕</span><span class="gr-n">'+(shut?'Closed tonight':'Book an act')+'</span><span class="gr-s">'+(shut?'only one room':'genres · bands')+'</span><span class="gr-cta">Choose ▸</span>';
+  else b.innerHTML='<span class="gr-t">Room '+r+'<small>\u{1F3DF} '+cap+'</small></span><span class="gr-ic">+</span><span class="gr-n">'+(shut?'Closed tonight':'Book an act')+'</span><span class="gr-s">'+(shut?'only one room':'genres · bands')+'</span><span class="gr-cta">Choose ▸</span>';
   b.onclick=()=>openP(r);return b;}
 
 function optRow(sel,map,wrap){wrap.innerHTML='';if(!sel)return;[...sel.options].forEach((o,k)=>{const lock=o.disabled,on=sel.value===o.value,m=map(o,k);
@@ -72,10 +72,10 @@ function txt(o){const m=/^(.*?)\s*(€\d+)?$/.exec(o.text);return{n:(m&&m[1]||o.
 
 function render(){if(!ok()||!root)return;
   const a1=$$('a1'),a2=$$('a2'),d=$$('dayact'),n0=$$('an0'),n1=$$('an1');
-  const s=[S.act&&S.act.join(),d&&d.value,n0&&n0.value,n1&&n1.value,a1&&[...a1.options].filter(o=>o.disabled).length,a2&&[...a2.options].filter(o=>o.disabled).length,tod,S.ph,window.dbl&&dbl()].join('|');
+  const s=[S.act&&S.act.join(),d&&d.value,n0&&n0.value,n1&&n1.value,a1&&[...a1.options].filter(o=>o.disabled).length,a2&&[...a2.options].filter(o=>o.disabled).length,tod,S.ph,typeof dbl==='function'&&dbl()].join('|');
   if(s===sig){if(picker.classList.contains('on'))renderP();return;}sig=s;
   const R=root._;
-  R.top.innerHTML='<b>Tonight · '+(ok()&&window.dow?DN[dow()]:'')+'</b><span class="gm-chip">\u{1F6AA} Doors 22:00</span><span class="gm-chip">\u{1F3AB} '+(350+350*(S.up?S.up.tix:0))+'</span><span class="gm-chip">\u{1F6BB} '+(300+150*(window.wcn?wcn():0))+'</span>';
+  R.top.innerHTML='<b>Tonight · '+(ok()&&typeof dow==='function'?DN[dow()]:'')+'</b><span class="gm-chip">\u{1F6AA} Doors 22:00</span><span class="gm-chip">\u{1F3AB} '+(350+350*(S.up?S.up.tix:0))+'</span><span class="gm-chip">\u{1F6BB} '+(300+150*(typeof wcn==='function'?wcn():0))+'</span>';
   R.rooms.innerHTML='';R.rooms.append(roomCard(1),roomCard(2));
   optRow(d,(o)=>{const t=txt(o);return{ic:DAYI[o.value]||'\u{1F3B6}',t:t.n.replace(/ (trio|band|dancers)$/i,''),s:t.p};},R.dr);
   const an=(o,k)=>{const t=txt(o);return{ic:ANI[k]||'\u{1F3AD}',t:t.n,s:t.p};};
