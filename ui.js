@@ -77,7 +77,7 @@ function syncNav(){for(const b of nav.children)b.classList.toggle('on',sheetStat
 // ---------- top HUD ----------
 const spd=mk('button','px','');spd.id='spd';spd.setAttribute('aria-label','Game speed');hud.appendChild(spd);
 spd.onclick=()=>{vib(8);const order=[2,4,1,0],i=order.indexOf(S.speed);const n=order[(i+1)%order.length];E('v'+n).click();};
-const SPL={0:'⏸',1:'▶',2:'▶▶',4:'▶▶▶'};
+const SPL={0:'⏸',1:'▶ 1×',2:'▶ 2×',4:'▶ 4×'};
 const tick=()=>{const h=hud.getBoundingClientRect();B.style.setProperty('--tick',(h.bottom+6)+'px');};
 new ResizeObserver(tick).observe(hud);addEventListener('resize',tick);tick();
 // ticker: tap to expand, swipe or tap x to dismiss until the next message
@@ -160,5 +160,6 @@ nav.addEventListener('click',()=>co.classList.remove('on'));
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(window.BMODE)exitBM();else if(sheetState!=='closed')setSheet('closed');}});
 
 openPane('tb','closed');setSheet('closed');moreRows();ui2();
+requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.add('rdy')));
 window.mfbUI={openPane,setSheet,enterBM,exitBM};
 })();
