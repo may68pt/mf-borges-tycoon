@@ -7,7 +7,7 @@ body.u2{--nav-h:62px;--sab:env(safe-area-inset-bottom,0px);--sat:env(safe-area-i
   -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;overscroll-behavior:none;touch-action:manipulation}
 body.u2 input,body.u2 textarea,body.u2 select{-webkit-user-select:text;user-select:text;font-size:16px}
 body.u2 button{touch-action:manipulation}
-body.u2 #app{grid-template-rows:minmax(0,1fr)}
+body.u2 #app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 
 /* ---------- top HUD ---------- */
 body.u2 #hud{top:calc(var(--sat) + 6px);left:calc(var(--sal) + 8px);right:calc(var(--sar) + 8px);display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:stretch}
