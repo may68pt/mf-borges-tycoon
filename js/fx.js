@@ -1,0 +1,90 @@
+/* MF Borges Tycoon - fx module (split from the single-file game; loads in order, shares global scope) */
+// see-through walls near the pointer
+const XRP=XRM.map(m=>{const bb=new THREE.Box3().setFromObject(m),sx=bb.max.x-bb.min.x,sz=bb.max.z-bb.min.z,y=(bb.max.y+bb.min.y)/2,x=(bb.max.x+bb.min.x)/2,z=(bb.max.z+bb.min.z)/2,w=sx>=sz;return {m,a:new THREE.Vector3(w?bb.min.x:x,y,w?z:bb.min.z),b:new THREE.Vector3(w?bb.max.x:x,y,w?z:bb.max.z)};});
+const MX={x:0,y:0,t:0,m:0},tv1=new THREE.Vector3(),tv2=new THREE.Vector3();let xrHid=0;
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();MX.x=e.clientX-r.left;MX.y=e.clientY-r.top;MX.t=performance.now();MX.m=e.pointerType==='mouse'?1:0;});
+c.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')MX.m=0;});
+function xray(){const act=SET.xray&&(MX.m||performance.now()-MX.t<2500);if(!act){if(xrHid){XRP.forEach(o=>o.m.visible=true);xrHid=0;}return;}xrHid=1;cam.updateMatrixWorld();const cw=c.clientWidth,ch=c.clientHeight,r=60+SET.xr*220,r2=r*r;
+for(const o of XRP){tv1.copy(o.a).project(cam);tv2.copy(o.b).project(cam);const ax=(tv1.x*.5+.5)*cw,ay=(-tv1.y*.5+.5)*ch,dx=(tv2.x*.5+.5)*cw-ax,dy=(-tv2.y*.5+.5)*ch-ay,L=dx*dx+dy*dy,t=L?Math.max(0,Math.min(1,((MX.x-ax)*dx+(MX.y-ay)*dy)/L)):0,px=ax+t*dx-MX.x,py=ay+t*dy-MX.y;o.m.visible=px*px+py*py>r2;}}
+// ================= the booking agency: ranked bands, collection, merch market, brand deals, club rank, awards =================
+function drawLogo(q,w,h){q.fillStyle='#0d0d12';q.fillRect(0,0,w,h);q.fillStyle='#e0202a';q.fillRect(0,h-3,w,3);for(let x=0;x<w;x+=6)q.fillRect(x,h-6,3,3);q.textBaseline='middle';q.textAlign='left';q.font='bold '+Math.round(h*.6)+'px monospace';q.fillStyle='#ffffff';q.fillText('HARD',w*.05,h*.42);q.fillStyle='#e0202a';q.fillText('CLUB',w*.54,h*.42);}
+const LOGO_URL=(()=>{const k=document.createElement('canvas');k.width=96;k.height=24;drawLogo(k.getContext('2d'),96,24);return k.toDataURL();})();
+$('logoimg').src=LOGO_URL;
+const BT=['Garage','Local hero','Regional','National','International','Legend'],BTC=['#7a7a86','#4d9a3a','#2f6db5','#8a63c7','#c9a227','#e5442f'],RNK=['Dive bar','Underground','Local scene','Regional hotspot','National stage','International landmark','Hall of Fame club'],RT=[0,40,120,300,700,1500,3000];
+const BSTAT=[{fee:60,pr:3,base:90,u:0,rk:0,gr:0,pp:2},{fee:130,pr:5,base:180,u:8,rk:0,gr:0,pp:5},{fee:320,pr:8,base:380,u:25,rk:1,gr:0,pp:11},{fee:760,pr:14,base:720,u:45,rk:2,gr:0,pp:24},{fee:2300,pr:28,base:1450,u:70,rk:4,gr:1,pp:55},{fee:6500,pr:55,base:2600,u:88,rk:5,gr:3,pp:120}];
+const BANDS=`techno|DJ Bacalhau|0~techno|Sardinha Sound System|0~techno|Tuga Thunder|1~techno|Kick Cartel|1~techno|Warehouse Ghosts|2~techno|Paula Temple|3~techno|Ben Klock|3~techno|Amelie Lens|4~techno|Charlotte de Witte|4~techno|Richie Hawtin|4~techno|Carl Cox|5~metal|Garage Gaia Goats|0~metal|Cerveja Quente|0~metal|Morte ao Pastel|1~metal|Porto Pitbull|1~metal|Moonspell|2~metal|Sepultura|3~metal|Gojira|3~metal|Slayer|4~metal|Iron Maiden|4~metal|Metallica|5~rock|Quarteto Avariado|0~rock|Os Mexilhões|1~rock|Linda Martini|2~rock|Xutos & Pontapés|3~rock|Pixies|3~rock|Queens of the Stone Age|4~rock|Foo Fighters|4~rock|The Rolling Stones|5~rock|AC/DC|5~indie|O Cantautor da Rua|0~indie|Café com Leite|1~indie|Capitão Fausto|2~indie|Sensible Soccers|2~indie|The National|3~indie|Arcade Fire|4~indie|Radiohead|4~indie|David Bowie (hologram tribute)|5~pop|Karaoke do Tio Zé|0~pop|Banda Filarmónica|1~pop|Mariza|3~pop|Dua Lipa|4~pop|Beyoncé|4~pop|ABBA (avatar show)|5~pop|Michael Jackson (hologram tribute)|5`;
+const BL=BANDS.split('~').map((l,i)=>{const f=l.split('|');return {id:'b'+i,g:f[0],n:f[1],t:+f[2]};}),BMAP={};
+const GCLS={techno:'raver',metal:'metal',rock:'rock',indie:'hipster',pop:'tourist'},GACC={techno:'decks',metal:'guitar',rock:'guitar',indie:'mic',pop:'mic'};
+for(const b of BL){BMAP[b.id]=b;const q=GEN[b.g],st=BSTAT[b.t];AC[b.id]={n:'★ '+b.n+' · '+BT[b.t]+' €'+st.fee,bn:b.n,g:b.g,t:Math.min(3,b.t),cost:st.fee,price:st.pr,bar:q.bar,mer:q.mer*(1+b.t*.3),base:st.base,k:5*(1+b.t),hyp:q.hyp+b.t*1.2,cul:q.cul,her:q.her,u:st.u,rk:st.rk,band:b.id,bt:b.t};}
+const BDNA={};const bdna=b=>BDNA[b.id]||(BDNA[b.id]=mkDNA(GCLS[b.g],'bnd'+b.id,{acc:GACC[b.g],hat:b.t>=4?'none':undefined}));
+const MERCH={techno:['Club tee','Rave poster','Limited vinyl'],metal:['Band tee','Tour poster','Battle jacket'],rock:['Tour tee','Gig poster','Signed pick'],indie:['Organic tee','Risograph print','Cassette tape'],pop:['Fan tee','Glossy poster','Collector doll']},MICO=['\u{1F455}','\u{1F5BC}️','⭐'];
+const BR=[['imperial','Imperial Dragon Lager','\u{1F37A}','bar sales'],['duro','Duro Cola','\u{1F964}','food stall income'],['voltio','Voltio Energy','⚡','ticket sales'],['ferro','Ferro Gin','\u{1F378}','drink stall income'],['noir','Porto Noir Wine','\u{1F377}','culture growth'],['granito','Granito Streetwear','\u{1F9E2}','merch value']],BF=[250,700,1800,4500],BP=[0,25,65,150,320],BN=['—','Bronze','Silver','Gold','Platinum'];
+const rankIdx=()=>{let k=0;RT.forEach((v,i)=>{if(S.pr>=v)k=i;});return k;};
+const brandLv=id=>S.brand[id]||0,brandM=id=>1+.06*brandLv(id),stallBrand=c=>c==='food'?brandM('duro'):c==='drink'?brandM('ferro'):1;
+const bandRec=id=>S.band[id]||(S.band[id]={plays:0,fans:0,best:0,un:0,set:0});
+const nColl=()=>BL.filter(b=>S.band[b.id]&&S.band[b.id].plays>0).length;
+const fanF=a=>a.band&&S.band[a.band]?1+Math.min(1,S.band[a.band].fans/2500):1;
+function canBook(a,r){if(S.fame[a.g]<(a.u||0))return false;if(!a.band)return true;const st=BSTAT[a.bt];if(rankIdx()<st.rk)return false;if(a.bt>=4&&r===2)return false;if(st.gr>0&&!(S.band[a.band]&&S.band[a.band].un))return false;return true;}
+function onGig(r,a,att,sold){S.gigs++;if(sold)S.sold++;const pp=a.band?BSTAT[a.bt].pp:[2,5,10,22][a.t];S.pr+=pp*(sold?1.5:1);
+if(!a.band)return;const B=bandRec(a.band),first=!B.plays;B.plays++;B.fans+=Math.round(att*.12);B.best=Math.max(B.best,att);
+if(first){toast('New act collected: '+a.bn+' ('+BT[a.bt]+')','\u{1F3B8}');if(a.bt>=3)S.gr++;sfx('goal');}
+const inv=S.inv[a.band]||(S.inv[a.band]=[0,0,0]),ds=S.disc[a.band]||(S.disc[a.band]=[0,0,0]);const gain=[Math.round(att*.05*(1+.2*a.bt)),Math.round(att*.03),Math.random()<.15+.08*a.bt?1:0];
+gain.forEach((g,i)=>{if(g>0){inv[i]+=g;if(!ds[i]){ds[i]=1;toast('New merch: '+MERCH[a.g][i]+' — '+a.bn,'\u{1F381}');}}});
+if(ds[0]&&ds[1]&&ds[2]&&!B.set){B.set=1;S.sets++;S.pr+=15+5*a.bt;if(a.bt>=2)S.gr++;S.cash+=100*(a.bt+1);toast('Merch set complete: '+a.bn+'!','\u{1F3C6}');}}
+const mval=(id,i)=>{const b=BMAP[id],B=S.band[id];return Math.round([14,9,55][i]*(1+b.t*1.7)*S.mi*(1+(B?B.fans:0)/3000)*brandM('granito'));};
+function sellMerch(ids,keep){let tot=0,n=0;for(const id of ids){const inv=S.inv[id],ds=S.disc[id];if(!inv)continue;for(let i=0;i<3;i++){const k=keep&&ds[i]?1:0,c2=inv[i]-k;if(c2>0){tot+=c2*mval(id,i);n+=c2;inv[i]=k;}}}if(n){S.cash+=tot;sfx('coin');toast('Sold '+n+' merch pieces for €'+tot,'\u{1F4B0}');}else{sfx('bad');S.log='Nothing to sell.';}}
+function dailyEco(){S.mi=Math.max(.6,Math.min(1.6,S.mi*(.92+Math.random()*.16)));let pay=0;for(const [id] of BR){const L=brandLv(id);pay+=BP[L];S.bheat[id]=Math.max(0,Math.min(100,(S.bheat[id]??25+Math.random()*30)+L*6-3+(Math.random()-.5)*5));}
+if(pay){S.cash+=pay;S.pre+='Sponsors paid €'+pay+'. ';}const nl=brandLv('noir');if(nl)S.cul=cl(S.cul+.3*nl);}
+const ACH=[['g1','First gig','Host any night',()=>S.gigs>=1,{cash:100,gr:0}],['g10','Ten nights','Host 10 gigs',()=>S.gigs>=10,{cash:400,gr:1}],['g30','Residency','Host 30 gigs',()=>S.gigs>=30,{cash:1500,gr:2}],
+['c5','Collector','Collect 5 acts',()=>nColl()>=5,{cash:300,gr:0}],['c15','Talent scout','Collect 15 acts',()=>nColl()>=15,{cash:1200,gr:1}],['c30','Booking king','Collect 30 acts',()=>nColl()>=30,{cash:4000,gr:3}],
+['hl','Headliner','Collect a National act',()=>BL.some(b=>b.t>=3&&bandRec(b.id).plays>0),{cash:800,gr:1}],['lg','Living legend','Collect a Legend',()=>BL.some(b=>b.t===5&&bandRec(b.id).plays>0),{cash:5000,gr:3}],
+['so1','Sold out','Sell out a night',()=>S.sold>=1,{cash:300,gr:0}],['so5','Full house','Sell out 5 nights',()=>S.sold>=5,{cash:1500,gr:1}],
+['m5k','Five grand','Hold €5,000',()=>S.cash>=5000,{cash:0,gr:1}],['m20k','Rich club','Hold €20,000',()=>S.cash>=20000,{cash:0,gr:2}],
+['r2','Local scene','Reach rank Local scene',()=>rankIdx()>=2,{cash:500,gr:0}],['r4','National stage','Reach rank National stage',()=>rankIdx()>=4,{cash:3000,gr:2}],['r6','Hall of Fame','Reach the top rank',()=>rankIdx()>=6,{cash:10000,gr:5}],
+['s1','Merch set','Complete a merch set',()=>S.sets>=1,{cash:300,gr:0}],['s5','Merch mogul','Complete 5 merch sets',()=>S.sets>=5,{cash:2500,gr:2}],
+['b3','Three sponsors','Run 3 brand deals',()=>BR.filter(b=>brandLv(b[0])>0).length>=3,{cash:600,gr:1}],['bg','Gold deal','Reach a Gold brand deal',()=>BR.some(b=>brandLv(b[0])>=3),{cash:2000,gr:1}],
+['f10','Fan base','10,000 fans across all acts',()=>BL.reduce((a,b)=>a+bandRec(b.id).fans,0)>=10000,{cash:1500,gr:1}]];
+function checkAch(){if(!S||S.over)return;for(const a of ACH){if(S.ach[a[0]])continue;let ok=false;try{ok=a[3]();}catch(e){}if(ok){S.ach[a[0]]=1;S.cash+=a[4].cash;S.gr+=a[4].gr;gainXP(25);S.pr+=5;toast('Award: '+a[1]+(a[4].cash?' +€'+a[4].cash:'')+(a[4].gr?' +'+a[4].gr+'\u{1F3C5}':''),'\u{1F3C6}');sfx('goal');}}}
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let AGH='';
+function renderAgency(){if(!S||$('ta').hidden)return;const tabs=[['bands','Acts'],['merch','Merch'],['brands','Brands'],['ranks','Ranks'],['awards','Awards']],R=rankIdx(),nx=RT[R+1];
+let h=`<div class='row' style='margin-top:0'>${tabs.map(([k,n])=>`<button class='${S.ag===k?'on':''}' data-a='ag' data-k='${k}'>${n}</button>`).join('')}<span class='m'>⭐ ${RNK[R]} (${Math.floor(S.pr)}${nx?'/'+nx:''}) · \u{1F3C5} ${S.gr} · \u{1F3B8} ${nColl()}/${BL.length}</span></div>`;
+if(S.ag==='bands'){h+=`<div class='row'>${['all',...Object.keys(GEN)].map(g=>`<button class='${S.agf===g?'on':''}' data-a='agf' data-k='${g}'>${g==='all'?'All':GEN[g].ic}</button>`).join('')}</div>`;
+for(const b of BL){if(S.agf!=='all'&&b.g!==S.agf)continue;const A=AC[b.id],st=BSTAT[b.t],B=S.band[b.id],un=st.gr===0||(B&&B.un),why=[];if(S.fame[b.g]<st.u)why.push(GEN[b.g].n+' fame '+Math.floor(S.fame[b.g])+'/'+st.u);if(R<st.rk)why.push('rank '+RNK[st.rk]);
+h+=`<div class='p br'>${av(bdna(b),b.id)}<div style='flex:1;min-width:0'><b>${esc(b.n)}</b> <span class='tg' style='background:${BTC[b.t]}'>${BT[b.t]}</span> ${GEN[b.g].ic}<br><small class='m'>${B&&B.plays?`played ${B.plays}× · ${B.fans} fans · best ${B.best}`:'not collected yet'} · fee €${st.fee} · ticket €${st.pr}${why.length?'<br>\u{1F512} '+why.join(', '):''}</small></div><div>`;
+if(!why.length&&!un)h+=`<button data-a='unl' data-k='${b.id}'>Unlock \u{1F3C5}${st.gr}</button>`;else if(!why.length)for(const r of [1,2]){if(b.t>=4&&r===2)continue;h+=S.act[r]===b.id?`<button class='on' data-a='cancel' data-r='${r}'>R${r} ✓</button>`:`<button data-a='book' data-k='${b.id}' data-r='${r}'>R${r}</button>`;}
+h+=`</div></div>`;}}
+else if(S.ag==='merch'){h+=`<p class='m'>Merch price index <b>${S.mi.toFixed(2)}</b> ${S.mi>1.05?'▲ hot market':S.mi<.95?'▼ cold market':'▬ steady'}. Every gig earns stock; complete all 3 items of an act for a set bonus.</p><div class='row'><button data-a='sellall'>Sell all duplicates</button><button data-a='sellall2'>Sell everything</button></div>`;
+for(const b of BL){const ds=S.disc[b.id],inv=S.inv[b.id];if(!ds)continue;h+=`<div class='p br'>${av(bdna(b),b.id)}<div style='flex:1'><b>${esc(b.n)}</b> <span class='tg' style='background:${BTC[b.t]}'>${BT[b.t]}</span><br>${[0,1,2].map(i=>`<small>${ds[i]?MICO[i]+' '+esc(MERCH[b.g][i])+' ×'+inv[i]+' (€'+mval(b.id,i)+')':'❓ ???'}</small>`).join(' · ')}</div><button data-a='sell' data-k='${b.id}'>Sell</button></div>`;}
+if(!Object.keys(S.disc).length)h+=`<p class='m'>No merch yet. Book a named act and play a night.</p>`;}
+else if(S.ag==='brands'){const act=BR.filter(b=>brandLv(b[0])>0).length,rk=[...BR].sort((a,b)=>(S.bheat[b[0]]||0)-(S.bheat[a[0]]||0));h+=`<p class='m'>Sponsors pay every morning and boost one area. Max 3 active deals. Higher tiers need a better club rank.</p>`;
+for(const [id,n,ic,ds] of BR){const L=brandLv(id);h+=`<div class='p br'><span style='font-size:22px'>${ic}</span><div style='flex:1'><b>${n}</b> <span class='tg' style='background:${['#555','#a0653a','#8c8c98','#c9a227','#7fd1d1'][L]}'>${BN[L]}</span><br><small class='m'>+${6*L}% ${ds} · pays €${BP[L]}/day</small></div>${L<4?`<button data-a='brand' data-k='${id}'>${L?'Upgrade':'Sign'} €${BF[L]}${R<L?' \u{1F512}':''}</button>`:'<small>MAX</small>'}</div>`;}
+h+=`<p class='px'>Brand ranking</p>`+rk.map((b,i)=>`<div class='p' style='margin-top:3px'>#${i+1} ${b[2]} ${b[1]} <span class='bar' style='width:80px'><u style='width:${Math.round(S.bheat[b[0]]||0)}%'></u></span> ${BN[brandLv(b[0])]}</div>`).join('');}
+else if(S.ag==='ranks'){h+=`<div class='p'><b class='px'>Club rank: ${RNK[R]}</b><br><span class='bar' style='width:100%'><u style='width:${nx?Math.round(100*(S.pr-RT[R])/(nx-RT[R])):100}%'></u></span><br><small class='m'>${nx?Math.floor(S.pr)+' / '+nx+' prestige for '+RNK[R+1]:'Top rank reached'}</small></div><p class='px'>Genre fame</p>`+Object.keys(GEN).map(g=>`<div class='p' style='margin-top:3px'>${GEN[g].ic} ${GEN[g].n} <span class='bar' style='width:90px'><u style='width:${Math.round(S.fame[g])}%'></u></span> ${Math.floor(S.fame[g])}</div>`).join('')+`<p class='px'>Collection by tier</p>`+BT.map((n,t)=>{const all=BL.filter(b=>b.t===t),got=all.filter(b=>bandRec(b.id).plays>0).length;return `<div class='p' style='margin-top:3px'><span class='tg' style='background:${BTC[t]}'>${n}</span> ${got}/${all.length}</div>`;}).join('')+`<p class='px'>Fan leaderboard</p>`+[...BL].filter(b=>bandRec(b.id).fans>0).sort((a,b)=>S.band[b.id].fans-S.band[a.id].fans).slice(0,8).map((b,i)=>`<div class='p' style='margin-top:3px'>#${i+1} ${esc(b.n)} <span class='m'>${S.band[b.id].fans} fans</span></div>`).join('');}
+else{h+=ACH.map(a=>`<div class='p' style='margin-top:3px;${S.ach[a[0]]?'':'opacity:.65'}'>${S.ach[a[0]]?'\u{1F3C6}':'○'} <b>${a[1]}</b> <span class='m'>${a[2]} · ${a[4].cash?'€'+a[4].cash+' ':''}${a[4].gr?a[4].gr+'\u{1F3C5}':''}</span></div>`).join('');}
+if(h!==AGH){AGH=h;$('ta').innerHTML=h;}}
+$('ta').onclick=e=>{const b=e.target.closest&&e.target.closest('button');if(!b||!S)return;const a=b.dataset.a,k=b.dataset.k,r=+b.dataset.r;sfx('click');
+if(a==='ag')S.ag=k;else if(a==='agf')S.agf=k;
+else if(a==='book'){const A=AC[k];if(S.ph==='night'){S.log='Cannot change the bill during the show.';sfx('bad');}else if(!canBook(A,r)){S.log='Not available yet.';sfx('bad');}else{S.act[r]=k;if(!dbl())S.act[3-r]='none';S.log='Booked '+A.bn+' for Room '+r+'.';}}
+else if(a==='cancel'){if(S.ph!=='night')S.act[r]='none';}
+else if(a==='unl'){const st=BSTAT[BMAP[k].t];if(S.gr>=st.gr){S.gr-=st.gr;bandRec(k).un=1;sfx('level');toast('Contract unlocked: '+BMAP[k].n,'\u{1F4DC}');}else{S.log='Need '+st.gr+' gold records.';sfx('bad');}}
+else if(a==='sell')sellMerch([k],0);else if(a==='sellall')sellMerch(Object.keys(S.inv),1);else if(a==='sellall2')sellMerch(Object.keys(S.inv),0);
+else if(a==='brand'){const L=brandLv(k);if(L>=4)return;if(R<L){S.log='Needs club rank '+RNK[L]+'.';sfx('bad');}else if(L===0&&BR.filter(x=>brandLv(x[0])>0).length>=3){S.log='Max 3 active brand deals.';sfx('bad');}else if(S.cash<BF[L]){S.log='Not enough cash.';sfx('bad');}else{S.cash-=BF[L];S.brand[k]=L+1;sfx('level');toast(BR.find(x=>x[0]===k)[1]+': '+BN[L+1]+' deal','\u{1F91D}');}}
+AGH='';renderAgency();ui();};
+// ================= show day: tour trucks, load-in, soundcheck, tiered fan lines, busker shifts, market animators =================
+let CLOSE=20,SCON=0,ANA=0;
+const SHOW={d0:-1,sref:null,on:0,ha:null,cl:0,a:14,d1:14.4,u1:17.6,sc0:19,sc1:21,t:0,st:null,full:0,scT:0,scS:0,tip:0,ui:''};
+const GPAL={techno:['#0b0b14','#35e0ff','#ff3d9a'],metal:['#141414','#e8e8e8','#c0262d'],rock:['#2a1a12','#f2c94c','#e5593f'],indie:['#efe4cc','#2f6db5','#e5593f'],pop:['#ff3d9a','#ffffff','#ffd400']};
+const btier=a=>a.band?a.bt:Math.min(3,a.t||0);
+function headAct(){let b=null;for(const r of [1,2]){const a=AC[S.act[r]];if(a&&a.g&&(!b||btier(a)>btier(b)))b=a;}return b;}
+function bStyle(a){const P=GPAL[a.g]||GPAL.rock,h=hsh((a.bn||a.g)+'x'),pat=[];for(let y=0;y<5;y++){const w=[];for(let x=0;x<3;x++)w.push(((h>>(y*3+x))&1)||(x===0&&y%2===0)?1:0);pat.push([w[0],w[1],w[2],w[1],w[0]]);}return {bg:P[0],fg:P[1+(h&1)],ac:P[2-(h&1)],pat,nm:(a.bn||GEN[a.g].n).toUpperCase()};}
+function shirtLogo(q,st,back){pxl(q,st.bg,0,0,16,16);
+if(back){pxl(q,st.fg,3,3,10,2);pxl(q,st.ac,3,6,10,1);pxl(q,st.fg,5,8,6,1);pxl(q,st.ac,6,10,4,1);return;}
+pxl(q,st.ac,3,2,9,9);pxl(q,st.bg,4,3,7,7);for(let y=0;y<5;y++)for(let x=0;x<5;x++)if(st.pat[y][x])pxl(q,st.fg,5+x,4+y,1,1);pxl(q,st.fg,4,12,8,1);pxl(q,st.ac,6,13,4,1);}
+function logoTex(st,w,h,bus){return cvx(w,h,q=>{pxl(q,st.bg,0,0,w,h);const top=bus?12:0;if(bus){pxl(q,'#1b2a3a',0,2,w,9);for(let x=6;x<w-8;x+=22)pxl(q,'#6fa3c8',x,3,16,7);}
+const ch=h-top-8,cell=Math.max(2,Math.floor((ch-4)/5)),sz=cell*5,ex=6,ey=top+Math.floor((ch-sz)/2)+1;
+pxl(q,st.ac,ex-2,ey-2,sz+4,sz+4);pxl(q,st.bg,ex,ey,sz,sz);for(let y=0;y<5;y++)for(let x=0;x<5;x++)if(st.pat[y][x])pxl(q,st.fg,ex+x*cell,ey+y*cell,cell,cell);
+pxl(q,st.ac,0,h-6,w,6);pxl(q,st.fg,0,h-7,w,1);
+const tx=ex+sz+8,mw=w-tx-4;let lines=[st.nm];if(st.nm.length>11&&st.nm.includes(' ')){const w2=st.nm.split(' ');let best=1,bd=99;for(let i=1;i<w2.length;i++){const d=Math.abs(w2.slice(0,i).join(' ').length-w2.slice(i).join(' ').length);if(d<bd){bd=d;best=i;}}lines=[w2.slice(0,best).join(' '),w2.slice(best).join(' ')];}
+let size=18;q.textBaseline='middle';q.textAlign='left';const fit=()=>Math.max(...lines.map(l=>{q.font='bold '+size+'px monospace';return q.measureText(l).width;}));while(fit()>mw&&size>6)size--;
+q.font='bold '+size+'px monospace';q.fillStyle=st.fg;const cy=top+ch/2+1;lines.forEach((l,i)=>q.fillText(l,tx,cy+(i-(lines.length-1)/2)*(size+1)));});}
