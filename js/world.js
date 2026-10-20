@@ -24,7 +24,7 @@ const c01=v=>v<0?0:v>1?1:v,dzF=z=>DE+(DW-DE)*c01(z/21),Ye=x=>-1-(DE-1)*c01(x/29)
 function Hs(x,z){if(z===undefined)z=10.5;if(x<0)return -1+c01(z/21)+Math.min(1.4,-.1*x);if(x<29){const f=c01(z/21);return Ye(x)*(1-f)+Yw(x)*f;}return -dzF(z)-.03*(x-29);}
 function Hp(x,z){if(z===undefined)z=10.5;if(x<0)return Hs(x,z);if(x>27.01&&x<29&&z>6.01&&z<14.99)return Hs(29.05,z);if(x<=28.9)return 0;if(x<29)return Hs(29,z)*(x-28.9)/.1;return Hs(x,z);}
 const gb=(x,z)=>(z>=0&&z<=21)?Hp(x,z):Hs(x,z);
-function gy(x,z){if(x>=27.02&&x<=29&&z>=6&&z<=15){const mid=-1.25,o=x>=27.96;if(z>=9.7&&z<=11.3)return 0;if(z<=6.7||z>=14.3)return mid;if(z<9.7){if(o){const g=Hs(29.05,9.7);return g+(mid-g)*(9.7-z)/3;}return mid*(9.7-z)/3;}if(o){const g=Hs(29.05,11.3);return g+(mid-g)*(z-11.3)/3;}return mid*(z-11.3)/3;}
+function gy(x,z){if(x>=27.02&&x<=29&&z>=6&&z<=15){const mid=-1.25,o=x>=27.96;if(z>=9.7&&z<=11.3)return o?Hs(29.05,z):0;if(z<=6.7||z>=14.3)return mid;if(z<9.7){if(o){const g=Hs(29.05,9.7);return g+(mid-g)*(9.7-z)/3;}return mid*(9.7-z)/3;}if(o){const g=Hs(29.05,11.3);return g+(mid-g)*(z-11.3)/3;}return mid*(z-11.3)/3;}
 if(z>=-.95&&z<-.02&&x>=4.6&&x<=15.4){if(x>=9.6&&x<=10.8)return 0;if(x<9.6)return Ye(4.6)*(1-(x-4.6)/5);return Ye(15.4)*(1-(15.4-x)/4.6);}return gb(x,z);}
 function terrG(xs,zs,fy,fu,fv){const P=[],U=[],I=[],nx=xs.length;for(let j=0;j<zs.length;j++)for(let i=0;i<nx;i++){P.push(xs[i],fy(xs[i],zs[j]),zs[j]);U.push(fu(xs[i]),fv(zs[j]));}
 for(let j=0;j<zs.length-1;j++)for(let i=0;i<nx-1;i++){const a=j*nx+i,b=(j+1)*nx+i,c2=j*nx+i+1,d=(j+1)*nx+i+1;I.push(a,b,c2,c2,b,d);}

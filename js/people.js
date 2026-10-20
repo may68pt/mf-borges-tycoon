@@ -100,12 +100,16 @@ rail(0,.08,0,9.6,.08,0);rail(10.8,.08,0,BX-RC,.08,0);rail(15,20.92,0,BX-RC,20.92
  const fl=(xc,za,zb,ya,yb)=>{const n=Math.max(2,Math.ceil(Math.abs(yb-ya)/.19)),r=(yb-ya)/n,run=(zb-za)/n;for(let i=0;i<n;i++){const top=ya+r*(i+1),zc=za+run*(i+.5),bot=Hs(29.05,zc)-.1;bx(sc,w,top-bot,Math.abs(run)+.005,xc,(top+bot)/2,zc,STP);bx(sc,w,.03,.03,xc,top+.005,zc+run/2,0x8f897d,1);}};
  fl(xo,9.7,6.7,ge,mid);fl(xo,11.3,14.3,gw,mid);fl(xi,6.7,9.7,mid,0);fl(xi,14.3,11.3,mid,0);
  for(const zc of [6.35,14.65]){const bot=Hs(29.05,zc)-.1;bx(sc,1.9,mid-bot,.7,27.96,(mid+bot)/2,zc,STP);}
- {const bot=Hs(29.05,10.5)-.1;bx(sc,1.9,-.16-bot,1.6,27.96,(-.16+bot)/2,10.5,GS);const ah=Math.min(2.05,-bot-.45);archMesh(1.36,ah+.12,mt(0xd8d2c4),28.935,bot+.1,10.5);archMesh(1.14,ah,mt(0x22262b),28.945,bot+.1,10.5);for(let k=0;k<5;k++)bx(sc,.02,ah-.6,.025,28.955,bot+.1+(ah-.6)/2,10.02+k*.24,0x555a60,1);}
- bx(sc,1.92,.16,1.6,27.96,-.08,10.5,STP);bx(sc,1.96,.06,1.64,27.96,.03,10.5,CP,1);
+ // the middle is recessed one block into the base: an open, double-height bay with a tall arched door on its back wall
+ {const bot=Hs(29.05,10.5)-.1,FX2=27.97;bx(sc,.95,-.16-bot,1.6,27.485,(-.16+bot)/2,10.5,GS);
+  vwall(FX2,9.7,FX2,11.3,(x,z)=>Hs(29.05,z),3);
+  const ah=-bot-.5;archMesh(1.36,ah+.14,mt(0xd8d2c4),FX2+.005,bot+.1,10.5);archMesh(1.14,ah,mt(0x22262b),FX2+.015,bot+.1,10.5);
+  for(let k=0;k<5;k++)bx(sc,.02,ah-.7,.025,FX2+.025,bot+.1+(ah-.7)/2,10.02+k*.24,0x555a60,1);bx(sc,.025,.05,1.1,FX2+.025,bot+.1+ah*.5,10.5,0x555a60,1);}
+ bx(sc,.95,.16,1.6,27.485,-.08,10.5,STP);bx(sc,.99,.06,1.64,27.485,.03,10.5,CP,1);
  vwall(27.0,6,27.0,15,(x,z)=>Hs(29.05,z),9);vwall(27.0,6,BX,6,(x,z)=>Hs(29.05,6),3);vwall(27.0,15,BX,15,(x,z)=>Hs(29.05,15),3);
  {const d1=new THREE.Mesh(archGeo(.7,.95),mt(0x3a3036));d1.position.set(28.05,mid,6.02);sc.add(d1);const d2=new THREE.Mesh(archGeo(.7,.95),mt(0x3a3036));d2.rotation.y=Math.PI;d2.position.set(28.75,mid,14.98);sc.add(d2);}
- rail(28.88,9.7,ge,28.88,6.7,mid,.45);rail(28.88,11.3,gw,28.88,14.3,mid,.45);rail(28.88,6.7,mid,28.88,6.0,mid,.45);rail(28.88,14.3,mid,28.88,15,mid,.45);rail(28.88,9.7,0,28.88,11.3,0,.45);
- rail(27.95,6.7,mid,27.95,9.7,0,.45);rail(27.95,14.3,mid,27.95,11.3,0,.45);rail(27.96,9.7,0,28.9,9.7,0,.45);rail(27.96,11.3,0,28.9,11.3,0,.45);
+ rail(28.88,9.7,ge,28.88,6.7,mid,.45);rail(28.88,11.3,gw,28.88,14.3,mid,.45);rail(28.88,6.7,mid,28.88,6.0,mid,.45);rail(28.88,14.3,mid,28.88,15,mid,.45);
+ rail(27.95,6.7,mid,27.95,9.7,0,.45);rail(27.95,14.3,mid,27.95,11.3,0,.45);rail(27.96,9.7,0,27.96,11.3,0,.45);
  rail(27.0,6,0,27.0,9.7,0);rail(27.0,11.3,0,27.0,15,0);rail(27.0,6,0,28.9,6,0);rail(27.0,15,0,28.9,15,0);}
 // east side twin stairs converging on the east entrance, with an arched door under the landing
 const eflight=(xa,xb)=>{const yb=Ye(xa),rise=-yb,n=Math.ceil(rise/.19),r=rise/n,run=(xb-xa)/n;for(let i=0;i<n;i++){const top=yb+r*(i+1),xc=xa+run*(i+.5),bot=Ye(xc)-.1;bx(sc,Math.abs(run),top-bot,.9,xc,(top+bot)/2,-.5,STP);bx(sc,Math.abs(run)+.01,top-bot+.12,.14,xc,(top+bot+.12)/2,-1.01,GS,1);}rail(xa,-1.01,yb+.12,xb,-1.01,.12,.45);};
@@ -126,7 +130,7 @@ for(const zc of [15.95,17.25,18.55]){const yb=Hs(29.05,zc),h=Math.min(1.5,-yb-.2
 const BN=(t1,t2,bg,fg)=>cvx(20,48,q=>{pxl(q,bg,0,0,20,48);q.fillStyle=fg;q.textAlign='center';q.font='bold 7px monospace';t1.split(' ').forEach((w,i)=>q.fillText(w,10,10+i*8));q.font='5px monospace';q.fillText(t2,10,42);});
 const pole=(x,z,ry,tx)=>{const y=gb(x,z);bx(sc,.06,2.7,.06,x,y+1.35,z,0x8a8f96);tx.forEach((t,k)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(.42,1.0),new THREE.MeshLambertMaterial({map:t,side:THREE.DoubleSide}));m.position.set(x+Math.cos(ry)*(k?.26:-.26)*0,y+2.15,z);m.rotation.y=ry;m.translateX(k?.25:-.25);sc.add(m);});};
 pole(12.2,.4,0,[BN('HARD CLUB','PORTO','#c42b2b','#1b1b2f'),BN('LEFT LUGGAGE','→','#1d3a6a','#ffffff')]);pole(-.7,20.3,Math.PI/2,[BN('HARD CLUB','PORTO','#c42b2b','#1b1b2f'),BN('NO MER CADO','RESTAURANTE','#e8464a','#ffffff')]);pole(28.4,20.4,Math.PI/2,[BN('NO MER CADO','BAR','#e8464a','#ffffff'),BN('HARD CLUB','PORTO','#c42b2b','#1b1b2f')]);
-WALLS.push([28.75,0,29.05,6],[28.75,15,29.05,21],[28.85,6,29.1,9.0],[28.85,12.0,29.1,15],[28.85,9.7,29.1,11.3],[27.9,6.7,28.02,9.7],[27.9,11.3,28.02,14.3],[27.96,9.6,28.9,9.8],[27.96,11.2,28.9,11.4],[26.85,6,27.15,9.6],[26.85,11.4,27.15,15],[27.0,5.85,28.9,6.15],[27.0,14.85,28.9,15.15],[0,-.15,9.6,.15],[10.8,-.15,28.9,.15],[-.15,0,.15,13],[15,20.9,28.9,21.2],[4.6,-1.15,9.6,-.95],[10.8,-1.15,15.4,-.95],[9.6,-1.15,10.8,-.95]);}
+WALLS.push([28.75,0,29.05,6],[28.75,15,29.05,21],[28.85,6,29.1,9.0],[28.85,12.0,29.1,15],[27.9,9.7,28.02,11.3],[27.9,6.7,28.02,9.7],[27.9,11.3,28.02,14.3],[26.85,6,27.15,9.6],[26.85,11.4,27.15,15],[27.0,5.85,28.9,6.15],[27.0,14.85,28.9,15.15],[0,-.15,9.6,.15],[10.8,-.15,28.9,.15],[-.15,0,.15,13],[15,20.9,28.9,21.2],[4.6,-1.15,9.6,-.95],[10.8,-1.15,15.4,-.95],[9.6,-1.15,10.8,-.95]);}
 // traffic
 function mkCar(c){const g=new THREE.Group();bx(g,1.2,.3,.6,0,.25,0,c,1);bx(g,.65,.28,.55,-.1,.52,0,c,1);bx(g,.55,.2,.5,-.1,.55,0,0x9fc5c8,1);for(const x of [-.4,.4])for(const z of [-.3,.3])bx(g,.18,.18,.06,x,.12,z,0x111111,1);bx(g,.05,.1,.5,.62,.28,0,0xffe9a0,1);sc.add(g);return g;}
 const CARS=[[-5,0,1,3.4],[-7,0,-1,2.8],[25.6,0,-1,3],[27.6,0,1,3.6],[46.2,1,1,2.6],[49.9,1,-1,3.2]].map(([p,ax,dir,sp],i)=>({m:mkCar([0xd64f3a,0x3b82d6,0xf2c94c,0x2f2f3a,0xffffff,0x6dbf5a][i]),p,ax,dir,sp,u:Math.random()*76}));
