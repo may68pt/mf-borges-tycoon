@@ -29,10 +29,8 @@ var css=[
 /* the speed button in the top bar must receive taps on phones */
 'body.u2 #spd{pointer-events:auto;cursor:pointer}',
 /* night report and stall panel: headline first, details on request */
-'body.calm #nr .rp-grid,body.calm #nr .rp-chips{display:none}',
-'body.calm #nr.det .rp-grid{display:grid}body.calm #nr.det .rp-chips{display:flex}',
 'body.calm #nr .tl,body.calm #nr .tl *{animation:none!important}',
-'body.u2 #nr button.rp-more{background:transparent;color:inherit;border:1px solid rgba(255,255,255,.28);min-height:40px;margin-top:8px}',
+'body.calm #nr .tl{opacity:1;transform:none}',
 'body.calm #spn .bio,body.calm #spn .chips{display:none}'
 ].join('\n');
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
@@ -71,16 +69,5 @@ apply(on);
 var nav=document.getElementById('nav');
 if(nav){var b=document.createElement('button');b.id='calmtog';b.onclick=function(){on=!on;lsSet(on?'1':'0');apply(on);};nav.appendChild(b);apply(on);}
 
-/* night report: add a "Show details" switch under the headline number */
-var nr=document.getElementById('nr');
-if(nr&&window.MutationObserver){
-  new MutationObserver(function(){
-    var rp=nr.querySelector('.rp');if(!rp||rp.querySelector('.rp-more'))return;
-    nr.classList.remove('det');
-    var net=rp.querySelector('.rp-net');if(!net)return;
-    var bt=document.createElement('button');bt.className='rp-more';bt.textContent='Show details';
-    bt.onclick=function(){var open=nr.classList.toggle('det');bt.textContent=open?'Hide details':'Show details';};
-    net.insertAdjacentElement('afterend',bt);
-  }).observe(nr,{childList:true});
-}
+/* night report: details are always shown (no switch) */
 })();

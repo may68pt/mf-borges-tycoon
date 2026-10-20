@@ -37,6 +37,13 @@ body.u2 #nr .rp-x,#nr .rp-x{position:absolute;right:0;top:0;width:36px;min-heigh
 #nr .rp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 #nr .rp-chips span{background:rgba(127,127,160,.18);border-radius:999px;padding:5px 10px;font:700 12px system-ui,sans-serif;display:inline-flex;gap:4px;align-items:center}
 #nr .rp-chips b{font-size:16px;display:inline-block;animation:rpbob 2.2s ease-in-out infinite}
+#nr .rp-sec{margin:10px 0 0}#nr .rp-sec h3{margin:0 0 5px;font:900 13px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+#nr .rp-room{background:rgba(127,127,160,.14);border-radius:14px;padding:8px 10px;margin-bottom:6px;font:600 13px/1.45 system-ui,sans-serif}
+#nr .rp-room .sb{display:inline-block;vertical-align:middle;width:90px;height:7px;border-radius:4px;background:rgba(127,127,160,.3);overflow:hidden;margin:0 6px}#nr .rp-room .sb i{display:block;height:100%;border-radius:4px}
+#nr .rp-room small{opacity:.75}#nr .rp-room .so{background:#2fbf71;color:#fff;border-radius:6px;padding:0 6px;font-size:10px;margin-left:4px}
+#nr .rp-tab{width:100%;border-collapse:collapse;font:600 13px/1.5 system-ui,sans-serif}#nr .rp-tab td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+#nr .rp-list div{font:600 13px/1.45 system-ui,sans-serif;padding:3px 0 3px 22px;position:relative}#nr .rp-list div:before{content:attr(data-i);position:absolute;left:0}
+#nr .up{color:#2fbf71}#nr .dn{color:#ff5a43}
 @keyframes rpin{to{opacity:1;transform:none}}
 @keyframes rpbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes rpwob{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-12deg)}84%{transform:rotate(10deg)}92%{transform:rotate(-6deg)}}
@@ -161,6 +168,41 @@ function countUp(el,to,delay,sign){
   requestAnimationFrame(f);
 }
 
+
+function details(r,net){
+  const B=S.nb||{cash:S.cash,hyp:S.hyp,cul:S.cul,her:S.her,lv:S.lv,xp:S.xp,fame:{...S.fame}},G=S.ng||[],L=S.nlog||[],U=S.up,T=G.reduce((s,g)=>s+g.att,0);
+  const dl=(a,b)=>{const d=Math.round(b-a);return `<b class="${d>0?'up':d<0?'dn':''}">${d>0?'+':''}${d}</b>`;};
+  const sb=(v,m,c)=>`<span class="sb"><i style="width:${Math.max(0,Math.min(100,m?100*v/m:0))}%;background:${c}"></i></span>`;
+  const good=[],bad=[],tip=[],has=re=>L.some(x=>re.test(x));
+  G.forEach(g=>{const f=g.att/g.cap,p=Math.round(f*100),inc=g.tk+g.ck+g.mr;
+    if(g.sold)good.push(`Room ${g.r} sold out — ${g.att}/${g.cap}`);else if(f>=.7)good.push(`Room ${g.r} packed at ${p}%`);else if(f<.4)bad.push(`Room ${g.r} only ${p}% full (${g.att}/${g.cap})`);
+    if(inc<g.cs)bad.push(`${g.nm} cost ${fmt(g.cs)} but brought in ${fmt(inc)}`);else good.push(`${g.nm} paid off: ${fmt(inc-g.cs)} after costs`);});
+  if(!G.length)bad.push('No events booked — a dark night');
+  net>0?good.push('Profitable night: '+fmt(net)):bad.push('Lost '+fmt(-net)+' tonight');
+  if(S.hyp>B.hyp+1)good.push('Hype up '+Math.round(S.hyp-B.hyp));else if(S.hyp<B.hyp)bad.push('Hype down '+Math.round(B.hyp-S.hyp));
+  if(S.lv>B.lv)good.push('Levelled up to LV '+S.lv+'!');
+  L.forEach(x=>{if(/turned away|incident|toilet|noise/.test(x))bad.push(x.charAt(0).toUpperCase()+x.slice(1));});
+  if(has(/turned away/))tip.push(U.tix<3?'Upgrade the Ticket office: +350 door capacity':'Door is maxed — split the crowd over two rooms');
+  if(has(/toilet/))tip.push('Place more Portable WCs — toilet queues cost hype');
+  if(has(/incident/)&&U.sec<3)tip.push('Upgrade Security to cut incidents and fines');
+  if(has(/noise/)&&U.snd<3)tip.push('A better Sound system means fewer noise complaints');
+  if(G.some(g=>g.att/g.cap<.4))tip.push('Low turnout: build hype by day, or book a cheaper act');
+  if(G.some(g=>g.sold))tip.push('You sold out — book a bigger act or use the bigger room');
+  if(U.cloak===0&&T>150)tip.push('Build a Cloakroom to earn from every guest');
+  if(U.bar<3&&T>200)tip.push('More Bar staff = +20% bar sales');
+  if(!G.length)tip.push('Book an act in the Night tab before 22:00');
+  if(S.her<B.her-1)tip.push('Heritage is slipping — mix in acoustic / cultural nights');
+  if(!tip.length)tip.push('Smooth night — push for bigger acts and keep the streak going');
+  const li=(a,i)=>a.length?a.map(x=>`<div data-i="${i}">${x}</div>`).join(''):`<div data-i="·">—</div>`;
+  const row=(a,b)=>`<tr><td>${a}</td><td>${b}</td></tr>`;
+  const rooms=G.length?G.map(g=>{const f=g.att/g.cap;return `<div class="rp-room"><b>Room ${g.r}</b> · ${g.nm}${g.sold?'<span class="so">SOLD OUT</span>':''}<br>👥 ${g.att}/${g.cap}${sb(g.att,g.cap,g.sold?'#2fbf71':f<.4?'#ff5a43':'#f2c94c')}${Math.round(f*100)}%<br><small>🎫 ${fmt(g.tk)} · 🧥 ${fmt(g.ck)} · 👕 ${fmt(g.mr)} · cost -${fmt(g.cs)} → </small><b class="${g.tk+g.ck+g.mr>=g.cs?'up':'dn'}">${fmt(g.tk+g.ck+g.mr-g.cs)}</b></div>`;}).join(''):`<div class="rp-room">No acts tonight.</div>`;
+  const fm=Object.keys(GEN).filter(g=>Math.floor(S.fame[g])!==Math.floor(B.fame[g])).map(g=>row(GEN[g].ic+' '+GEN[g].n+' fame',Math.floor(B.fame[g])+' → '+Math.floor(S.fame[g])+' '+dl(B.fame[g],S.fame[g]))).join('');
+  return `<div class="rp-sec"><h3>🎶 Rooms</h3>${rooms}<small style="opacity:.75">Total crowd ${T}${T?' · bars '+fmt(r.bar/T)+' per head':''}</small></div>
+   <div class="rp-sec"><h3>📈 Progress</h3><table class="rp-tab">${row('💰 Cash',fmt(B.cash)+' → '+fmt(S.cash)+' '+dl(B.cash,S.cash))+row('🔥 Hype',Math.round(B.hyp)+' → '+Math.round(S.hyp)+' '+dl(B.hyp,S.hyp))+row('🎭 Culture',Math.round(B.cul)+' → '+Math.round(S.cul)+' '+dl(B.cul,S.cul))+row('🏛️ Heritage',Math.round(B.her)+' → '+Math.round(S.her)+' '+dl(B.her,S.her))+row('⭐ Level','LV '+S.lv+(S.lv>B.lv?' ⬆️':'')+' · '+Math.floor(S.xp)+'/'+need(S.lv)+' XP')+fm}</table></div>
+   <div class="rp-sec rp-list"><h3 class="up">✅ What went well</h3>${li(good,'👍')}</div>
+   <div class="rp-sec rp-list"><h3 class="dn">❌ What went wrong</h3>${li(bad,'👎')}</div>
+   <div class="rp-sec rp-list"><h3 style="color:#f2c94c">💡 What could be better</h3>${li(tip,'➡️')}</div>`;
+}
 window.showReport=showReport=function(){
   const r=S.rep,net=r.tix+r.bar+r.cloak+r.merch-r.cost-r.fine;
   S.rs=S.speed||2;S.speed=0;
@@ -178,6 +220,7 @@ window.showReport=showReport=function(){
    <div class="rp-net ${net<0?'neg':''}"><span class="ic">${net>0?'🤑':net<0?'😭':'😐'}</span><div class="lb">Net profit</div><div class="nv" id="rpnet">€0</div></div>
    <div class="rp-grid">${tiles.map((t,i)=>`<div class="tl ${t[0]}" style="animation-delay:${.15+i*.09}s;--an:${t[4]};--du:${2.2+(i%3)*.5}s;--dl:${i*.35}s"><span class="ic">${t[1]}</span><span class="nv" data-v="${t[3]}">€0</span><span class="lb">${t[2]}</span><span class="bar"><i data-w="${Math.round(Math.abs(t[3])/mx*100)}"></i></span></div>`).join('')}</div>
    <div class="rp-chips">${fame}<span><b>🛒</b>${fmt(S.earn)} market</span><span><b>⭐</b>${RNK[rankIdx()]} · ${Math.floor(S.pr)} pts</span></div>
+   ${details(r,net)}
    <button id="nrb">Next morning</button></div>`;
   $('nr').style.display='flex';
   const root=$('nr').querySelector('.mgs');

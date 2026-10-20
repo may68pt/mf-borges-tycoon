@@ -1,13 +1,13 @@
 /* MF Borges Tycoon - gigs module (split from the single-file game; loads in order, shares global scope) */
 // ---- gigs: night resolution, bars, report ----
 function barSet(){const A=[0,AC[S.act[1]],AC[S.act[2]]],m=(1+.2*S.up.bar)*brandM('imperial');S.barRate=[0,S.att[1]*(A[1].bar||0)*m/240/2,S.att[2]*(A[2].bar||0)*m/240,(S.att[1]+S.att[2])*.75*m/240];S.barOn=[0,S.att[1]>0,S.att[2]>0,S.att[1]+S.att[2]>0];}
-function night(){const n=[1,2].filter(r=>S.act[r]!=='none').length,wk=dow()===3||dow()===4?1.2:dow()===5?1.1:1,log=[],U=S.up,rep=S.rep,want=[0,0,0];let tot=0;S.att=[0,0,0];
+function night(){const n=[1,2].filter(r=>S.act[r]!=='none').length,wk=dow()===3||dow()===4?1.2:dow()===5?1.1:1,log=[],U=S.up,rep=S.rep,want=[0,0,0];let tot=0;S.att=[0,0,0];S.nb={cash:S.cash,hyp:S.hyp,cul:S.cul,her:S.her,lv:S.lv,xp:S.xp,fame:{...S.fame}};S.ng=[];S.nlog=log;
 for(const r of [1,2]){const a=AC[S.act[r]];if(!a.cost)continue;want[r]=Math.round(Math.min(CAP[r],(a.base+S.hyp*a.k)*wk*(1+S.fame[a.g]/150)*(1+.06*U.snd)*(1+Math.min(.3,S.tide/120))*fanF(a))*(n>1?.9:1));tot+=want[r];}
 const tcap=350+350*U.tix,f=tot>tcap?tcap/tot:1;if(f<1)log.push('door queue: '+(tot-tcap)+' turned away');
 for(const r of [1,2]){const a=AC[S.act[r]];if(!a.cost)continue;const att=Math.round(want[r]*f);S.att[r]=att;const tk=Math.round(att*a.price*brandM('voltio')),ck=Math.round(att*[0,.9,1.4,2][U.cloak]),mr=Math.round(att*a.mer*.6*brandM('granito')),cs=a.cost+Math.round(att*.5)+80*U.sec;
 rep.tix+=tk;rep.cloak+=ck;rep.merch+=mr;rep.cost+=cs;S.cash+=tk+ck+mr-cs;S.hyp=cl(S.hyp+a.hyp+.5*(U.snd+U.lit));S.cul=cl(S.cul+a.cul);S.her=cl(S.her-a.her);
 const sold=att>=CAP[r]*.95;S.fame[a.g]=Math.min(100,S.fame[a.g]+4+2*a.t+(sold?5:0));gainXP(12+8*a.t);S.hist.unshift('D'+S.day+' '+GEN[a.g].ic+att);onGig(r,a,att,sold);
-log.push('R'+r+' '+(a.band?a.bn:GEN[a.g].n+' '+TIERS[a.t][0])+': '+att+(sold?' SOLD OUT':''));
+log.push('R'+r+' '+(a.band?a.bn:GEN[a.g].n+' '+TIERS[a.t][0])+': '+att+(sold?' SOLD OUT':''));S.ng.push({r,nm:a.band?a.bn:GEN[a.g].n+' '+TIERS[a.t][0],att,cap:CAP[r],sold,tk,ck,mr,cs});
 if(Math.random()<.12*GEN[a.g].nz/2*(1-.25*U.sec)){const d2=100+Math.round(Math.random()*250);S.cash-=d2;rep.fine+=d2;S.her=cl(S.her-3);S.hyp=cl(S.hyp-2);log.push('incident -€'+d2);}}
 S.hist.length=Math.min(S.hist.length,5);
 if(!n){S.hyp=cl(S.hyp-3);S.log='Dark night: no events, hype slips.';}else{const cap=300+150*wcn(),T=S.att[1]+S.att[2];if(T>cap){const p=Math.min(3,Math.ceil((T-cap)/300));S.hyp=cl(S.hyp-p);log.push('toilet queues -'+p+' hype');}
