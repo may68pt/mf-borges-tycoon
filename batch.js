@@ -20,7 +20,7 @@ if(XRM&&XRM.forEach)XRM.forEach(ex);
 ex(roof);
 try{if(stalls&&stalls.forEach)stalls.forEach(function(s){ex(s&&s.m);});}catch(e){}
 var ANIMPROP=['ll','lr','al','ar','hd','pd','an','v'];
-function plainMat(m){return m&&!Array.isArray(m)&&(m.isMeshLambertMaterial||m.isMeshBasicMaterial)&&!m.map&&!m.transparent&&m.opacity===1&&!m.vertexColors&&!m.alphaMap;}
+function plainMat(m){return m&&!Array.isArray(m)&&(m.isMeshLambertMaterial||m.isMeshBasicMaterial)&&!m.map&&!m.transparent&&m.opacity===1&&!m.vertexColors&&!m.alphaMap&&!(m.emissive&&m.emissive.getHex()!==0);}
 function plainMesh(o){return o.isMesh&&!o.isSkinnedMesh&&o.geometry&&o.geometry.attributes&&o.geometry.attributes.position&&plainMat(o.material)&&!o.userData.noMerge;}
 function inSkip(o){for(var p=o;p&&p!==sc;p=p.parent)if(skip.has(p))return true;return false;}
 function effVisible(o){for(var p=o;p;p=p.parent)if(!p.visible)return false;return true;}
@@ -123,8 +123,85 @@ function watch(){
   B.calls=cells.filter(function(c){return c.live;}).length;
 }
 
+/* ---------- stalls: one merged mesh per stall, built in the stall's own space (so packing up / moving the stall just works) ---------- */
+var matV=new T.MeshLambertMaterial({vertexColors:true});
+var SR=new Map(),srInv=new T.Matrix4(),srM=new T.Matrix4();
+function isChar(o){return o.ll!==undefined&&o.hd!==undefined;}
+function gather(root){
+  var parts=[];
+  (function walk(o){
+    if(o!==root&&isChar(o))return;                       // the worker keeps his own animation
+    if(o.isMesh&&plainMesh(o)&&o.userData&&!Object.keys(o.userData).length)parts.push(o);
+    for(var i=0;i<o.children.length;i++)walk(o.children[i]);
+  })(root);
+  return parts;
+}
+function visTo(o,root){for(var p=o;p&&p!==root;p=p.parent)if(!p.visible)return false;return true;}
+function relSnap(root,parts){
+  srInv.copy(root.matrixWorld).invert();
+  return parts.map(function(p){srM.multiplyMatrices(srInv,p.matrixWorld);return {m:Array.prototype.slice.call(srM.elements),v:visTo(p,root),c:p.material.color.getHex()};});
+}
+function sameRel(a,b){return a.v===b.v&&a.c===b.c&&same(a.m,b.m);}
+function mountStall(rec,parts,snap){
+  var nv=0,ni=0,i,k;
+  parts.forEach(function(m){var a=m.geometry.attributes.position.count;nv+=a;ni+=m.geometry.index?m.geometry.index.count:a;});
+  var pos=new Float32Array(nv*3),nor=new Float32Array(nv*3),col=new Float32Array(nv*3),idx=new Uint32Array(ni),vo=0,io=0,mt=new T.Matrix4(),n3=new T.Matrix3(),v=new T.Vector3(),cast=false;
+  parts.forEach(function(m,pi){
+    mt.fromArray(snap[pi].m);n3.getNormalMatrix(mt);
+    var gp=m.geometry,P=gp.attributes.position,N=gp.attributes.normal,n=P.count,c=m.material.color;
+    for(i=0;i<n;i++){
+      v.fromBufferAttribute(P,i).applyMatrix4(mt);pos[(vo+i)*3]=v.x;pos[(vo+i)*3+1]=v.y;pos[(vo+i)*3+2]=v.z;
+      if(N){v.fromBufferAttribute(N,i).applyMatrix3(n3).normalize();nor[(vo+i)*3]=v.x;nor[(vo+i)*3+1]=v.y;nor[(vo+i)*3+2]=v.z;}
+      col[(vo+i)*3]=c.r;col[(vo+i)*3+1]=c.g;col[(vo+i)*3+2]=c.b;
+    }
+    if(gp.index){for(k=0;k<gp.index.count;k++)idx[io++]=gp.index.getX(k)+vo;}else for(k=0;k<n;k++)idx[io++]=vo+k;
+    vo+=n;if(m.castShadow)cast=true;
+  });
+  var geo=new T.BufferGeometry();
+  geo.setAttribute('position',new T.BufferAttribute(pos,3));geo.setAttribute('normal',new T.BufferAttribute(nor,3));geo.setAttribute('color',new T.BufferAttribute(col,3));geo.setIndex(new T.BufferAttribute(idx,1));
+  geo.computeBoundingSphere();
+  var mesh=new T.Mesh(geo,matV);mesh.castShadow=cast;mesh.receiveShadow=true;mesh.userData.__batch=1;
+  rec.root.add(mesh);rec.mesh=mesh;rec.parts=parts;rec.snap=snap;rec.state='live';
+  parts.forEach(function(p){p.layers.set(HIDE);});
+  B.stalls++;B.sparts+=parts.length;
+}
+function unmountStall(rec){
+  if(rec.mesh){rec.root.remove(rec.mesh);rec.mesh.geometry.dispose();rec.mesh=null;}
+  rec.parts.forEach(function(p){p.layers.set(0);});
+  B.stalls--;B.sparts-=rec.parts.length;
+}
+function stallTick(){
+  var now=performance.now(),list=[];
+  try{stalls.forEach(function(s){if(s&&s.m&&s.m.isObject3D)list.push(s.m);});}catch(e){return;}
+  list.forEach(function(root){
+    var rec=SR.get(root);
+    if(!rec){rec={root:root,state:'new',t:0,bad:new Set(),tries:0,parts:[],snap:null,mesh:null};SR.set(root,rec);}
+  });
+  SR.forEach(function(rec,root){
+    if(!root.parent||list.indexOf(root)<0){if(rec.state==='live')unmountStall(rec);SR.delete(root);return;}
+    if(rec.state==='new'){
+      var ps=gather(root).filter(function(p){return !rec.bad.has(p);});
+      if(ps.length<6){rec.t=now+3000;rec.state='cool';return;}
+      rec.cand=ps;rec.snapA=relSnap(root,ps);rec.t=now;rec.state='obs';
+    }else if(rec.state==='obs'){
+      if(now-rec.t<3000)return;
+      var cur=relSnap(root,rec.cand),keep=[],ks=[];
+      rec.cand.forEach(function(p,i){if(sameRel(cur[i],rec.snapA[i])){keep.push(p);ks.push(cur[i]);}else rec.bad.add(p);});
+      if(keep.length>=6)mountStall(rec,keep,ks);else{rec.state='cool';rec.t=now+5000;}
+    }else if(rec.state==='live'){
+      var cs=relSnap(root,rec.parts),ch=[];
+      rec.parts.forEach(function(p,i){if(!sameRel(cs[i],rec.snap[i]))ch.push(p);});
+      if(ch.length){ch.forEach(function(p){rec.bad.add(p);});unmountStall(rec);rec.state='cool';rec.t=now+2500;rec.tries++;if(rec.tries>6)rec.state='dead';}
+    }else if(rec.state==='cool'){
+      if(now>=rec.t)rec.state='new';
+    }
+  });
+}
+B.stalls=0;B.sparts=0;
+
 /* ---------- run: observe a few seconds, then merge what never moved ---------- */
 function start(){
+  setInterval(stallTick,1000);
   var items=collect();if(!items.length)return;
   var all=[];items.forEach(function(it){it.meshes.forEach(function(m){all.push(m);});});
   all.forEach(function(m){m.updateWorldMatrix(true,false);});
