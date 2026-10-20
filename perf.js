@@ -107,7 +107,7 @@ function loadJS(src,cb){var s=document.createElement('script');s.src=src;s.onloa
 function ensureMini(cb){
   if(loaded){cb&&cb();return;}
   if(loading)return;loading=true;
-  loadJS('mini.js?v=2',function(){loadJS('games.js?v=1',function(){loaded=true;loading=false;cb&&cb();});});
+  loadJS('mini.js?v=2',function(){loadJS('games.js?v=1',function(){loadJS('pixel.js?v=1',function(){loaded=true;loading=false;cb&&cb();});});});
 }
 P.ensureMini=ensureMini;
 var osp=window.openSP;
