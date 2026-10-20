@@ -52,22 +52,23 @@ function setLite(ch,on){
   rec.on=on;rec.lite.visible=on;
   for(var i=0;i<rec.parts.length;i++)rec.parts[i].layers.set(on?HIDE:0);
 }
-function register(list){
-  if(!list||!list.length)return;
-  list.forEach(function(ch){
-    if(info.has(ch)||!ch.children||ch.children.length<5)return;
+function register(){
+  var sc=g('sc');if(!sc)return;
+  sc.traverse(function(ch){
+    if(ch.ll===undefined||ch.hd===undefined||info.has(ch)||!ch.children||ch.children.length<5)return;
     info.set(ch,{lite:null,parts:[],on:false});
     try{bake(ch);L.chars++;}catch(e){info.delete(ch);}
   });
 }
+function effVis(o){for(var p=o;p;p=p.parent)if(!p.visible)return false;return true;}
 function focus(){var w=g('VW');return w?[w.tx,w.tz]:[13,10.5];}
 var KEEP=[0,16,999];                          // how many full-detail people per tier (Low, Balanced, High)
 function update(){
   var tier=(window.mfbPerf&&window.mfbPerf.tier);if(tier===undefined)tier=1;
   var k=KEEP[tier],f=focus(),arr=[];
   info.forEach(function(rec,ch){
-    if(!ch.visible){return;}
-    var dx=ch.position.x-f[0],dz=ch.position.z-f[1];
+    if(!effVis(ch)){return;}
+    var e=ch.matrixWorld.elements,dx=e[12]-f[0],dz=e[14]-f[1];
     arr.push([dx*dx+dz*dz-(rec.on?0:6),ch]);       // people already full get a small bonus (no flicker)
   });
   arr.sort(function(a,b){return a[0]-b[0];});
@@ -82,7 +83,7 @@ R.render=function(s,c){
   try{
     var n=performance.now();
     if(n-lastBake>2500){                         // pick up new characters / outfit changes
-      lastBake=n;register(g('V'));register(g('PED'));
+      lastBake=n;register();
       var ph=g('S')&&g('S').ph;
       if(ph!==lastPh){lastPh=ph;info.forEach(function(rec,ch){try{var on=rec.on;setLite(ch,false);bake(ch);rec.on=false;if(on)setLite(ch,true);}catch(e){}});}
     }
@@ -90,5 +91,5 @@ R.render=function(s,c){
   }catch(e){}
   return prev(s,c);
 };
-register(g('V'));register(g('PED'));
+register();
 })();
