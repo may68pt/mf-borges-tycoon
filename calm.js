@@ -26,6 +26,8 @@ var css=[
 'body.calm #hud .bar,body.calm #lims,body.calm #hud #sl{display:none}',
 'body.calm #tg>p.m{display:none}',
 '#calmtog{margin-left:4px}',
+/* the speed button in the top bar must receive taps on phones */
+'body.u2 #spd{pointer-events:auto;cursor:pointer}',
 /* night report and stall panel: headline first, details on request */
 'body.calm #nr .rp-grid,body.calm #nr .rp-chips{display:none}',
 'body.calm #nr.det .rp-grid{display:grid}body.calm #nr.det .rp-chips{display:flex}',
