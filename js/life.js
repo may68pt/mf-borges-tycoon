@@ -45,41 +45,37 @@ function bubble(txt,x,z,y,kind,f,life){if(!SET.pop)return;const b=BUB.find(q=>q.
 const HRT=[];{const k=document.createElement('canvas');k.width=9;k.height=8;const q=k.getContext('2d');const px=[[1,0],[2,0],[6,0],[7,0],[0,1],[1,1],[2,1],[3,1],[5,1],[6,1],[7,1],[8,1],[0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],[2,4],[3,4],[4,4],[5,4],[6,4],[3,5],[4,5],[5,5],[4,6]];q.fillStyle='#ff3d7f';px.forEach(([x,y])=>q.fillRect(x,y,1,1));q.fillStyle='#ffd1e3';q.fillRect(2,1,1,1);const t=new THREE.CanvasTexture(k);t.magFilter=t.minFilter=THREE.NearestFilter;for(let i=0;i<16;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));s.scale.set(.42,.37,1);s.visible=false;s.renderOrder=11;sc.add(s);HRT.push({s,l:0});}}
 function heart(x,y,z){const h=HRT.find(q=>q.l<=0);if(!h)return;h.l=1.8;h.s.position.set(x+(Math.random()-.5)*.3,y,z+(Math.random()-.5)*.3);h.s.visible=true;h.s.material.opacity=1;}
 
-// ---- police station (lower level, south-east corner under the platform), car park entry/exit, road, phone box ----
+// ---- police station: two storeys inside the granite base at the south-east corner (right of the front stairs, seen from the square); the car park exit ramp sits right in front of it ----
 const yg=(x,z)=>gb(x,z);
-const POL={};{const x0=23.6,x1=29.6,z0=-1.8,z1=-.35,yb=Hs(26.5),cx=(x0+x1)/2;
-bx(sc,x1-x0,1.2,z1-z0,cx,yb-.4,(z0+z1)/2,0x8e8a80);bx(sc,x1-x0,1.8,z1-z0,cx,yb+.8,(z0+z1)/2,0xe9e6dc);bx(sc,x1-x0+.2,.12,z1-z0+.2,cx,yb+1.75,(z0+z1)/2,0x6e6a62);
-bx(sc,x1-x0,.4,.08,cx,yb+1.45,z0-.03,0x1d3a8a,1);bx(sc,.9,1.15,.06,cx,yb+.78,z0-.03,0x1d2a5a,1);bx(sc,.7,.9,.07,cx,yb+.8,z0-.05,0x7fb4c4,1);
-for(const dx of [-2.1,-1.3,1.3,2.1])bx(sc,.55,.6,.06,cx+dx,yb+1.0,z0-.03,0x7fb4c4,1);
-for(const dx of [-2.9,2.9]){const m=new THREE.Mesh(gm(.3,.2,.3),new THREE.MeshBasicMaterial({color:0x3a6cff}));m.position.set(cx+dx,yb+1.95,(z0+z1)/2);sc.add(m);POL[dx<0?'l1':'l2']=m;}
-bx(sc,1.2,.12,.5,cx,yb+.2,z0-.3,0xb9b2a4,1);
-const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.38),new THREE.MeshBasicMaterial({map:cvx(64,10,q=>{pxl(q,'#1d3a8a',0,0,64,10);q.fillStyle='#ffffff';q.font='bold 8px monospace';q.textAlign='center';q.fillText('POLÍCIA',32,8);})}));sg.position.set(cx,yb+1.46,z0-.09);sg.rotation.y=Math.PI;sc.add(sg);
-const cop=genChar('local','cop2',{top:'jacket',topc:'#1d3a7a',top2:'#ffffff',bot:'trousers',botc:'#1d2a4a',hat:'cap',hatc:'#1d3a7a',face:'sunglasses',hair:'short',hairc:'#3a2416',acc:'headset',shoe:'boots',shoec:'#111111',skin:'#efc08e'});cop.position.set(cx-1.6,yg(cx,-2.3),-2.2);cop.rotation.y=Math.PI;sc.add(cop);POL.cop=cop;
-const pc=mkCar(0xf4f4f4);pc.position.set(31.2,Hs(31.2),-3.05);sc.add(pc);bx(pc,1.22,.08,.62,0,.33,0,0x1d3a8a,1);const lb1=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0xff2020})),lb2=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0x2060ff}));lb1.position.set(-.1,.75,-.12);lb2.position.set(-.1,.75,.12);pc.add(lb1,lb2);POL.b1=lb1;POL.b2=lb2;POL.car=pc;}
+const POL={};{const cz=2.4,yb=Hs(29.05,cz);
+for(const [dz,k] of [[-1.3,'l1'],[1.3,'l2']]){const m=new THREE.Mesh(gm(.12,.2,.12),new THREE.MeshBasicMaterial({color:0x3a6cff}));m.position.set(29.02,yb+1.42,cz+dz);sc.add(m);POL[k]=m;}
+const cop=genChar('local','cop2',{top:'jacket',topc:'#1d3a7a',top2:'#ffffff',bot:'trousers',botc:'#1d2a4a',hat:'cap',hatc:'#1d3a7a',face:'sunglasses',hair:'short',hairc:'#3a2416',acc:'headset',shoe:'boots',shoec:'#111111',skin:'#efc08e'});cop.position.set(29.5,gb(29.5,2.05),2.05);cop.rotation.y=Math.PI/2;sc.add(cop);POL.cop=cop;
+const pc=mkCar(0xf4f4f4);pc.position.set(30.55,gb(30.55,1.9),1.9);pc.rotation.y=Math.PI/2;sc.add(pc);bx(pc,1.22,.08,.62,0,.33,0,0x1d3a8a,1);const lb1=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0xff2020})),lb2=new THREE.Mesh(gm(.12,.08,.2),new THREE.MeshBasicMaterial({color:0x2060ff}));lb1.position.set(-.1,.75,-.12);lb2.position.set(-.1,.75,.12);pc.add(lb1,lb2);POL.b1=lb1;POL.b2=lb2;POL.car=pc;}
 
 // Esmeralda, the day manager: black hair, super stylish, very bossy
 const ESM=genChar('manager','esmeralda',{top:'jacket',topc:'#b3122e',top2:'#111111',bot:'trousers',botc:'#111111',hat:'none',hair:'long',hairc:'#050507',skin:'#e6b48c',face:'none',acc:'bag',accc:'#111111',shoe:'boots',shoec:'#111111',sl:1});ESM.scale.setScalar(1.05);ESM.position.set(22.5,0,10.6);ESM.visible=false;sc.add(ESM);
 const EM={tx:22.5,tz:10.6,w:0,say:0,ph:'',list:null,pose:0};
-// car park (underground): exit at the north end of the road beside the square, entrance at the south-west bottom of the square
-function portal(zc,label,col){const yb=Hs(32.1),g=new THREE.Group();bx(g,1.9,.04,2.1,0,.03,0,0x16161b,1);bx(g,.22,.8,2.2,-1.0,.4,0,0xb9b2a4);bx(g,.22,.8,2.2,1.0,.4,0,0xb9b2a4);bx(g,2.2,.25,.5,0,.85,-.9,0xa39d90);
+// car park (underground): EXIT ramp at the police corner of the square, ENTRANCE at the opposite (garage-door) corner
+function portal(zc,label,col){const yb=gb(32.1,zc),g=new THREE.Group();bx(g,1.9,.04,2.1,0,.03,0,0x16161b,1);bx(g,.22,.8,2.2,-1.0,.4,0,0xb9b2a4);bx(g,.22,.8,2.2,1.0,.4,0,0xb9b2a4);bx(g,2.2,.25,.5,0,.85,-.9,0xa39d90);
 for(let i=0;i<5;i++)bx(g,.38,.03,.2,-.8+i*.4,.06,1.0,i%2?0xf2c94c:0x222222,1);bx(g,.06,1.5,.06,1.15,.75,1.05,0x555555);
 const sg=new THREE.Mesh(new THREE.PlaneGeometry(.9,.55),new THREE.MeshBasicMaterial({map:cvx(32,20,q=>{pxl(q,col,0,0,32,20);pxl(q,'#ffffff',1,1,30,18);pxl(q,col,2,2,28,16);q.fillStyle='#ffffff';q.font='bold 9px monospace';q.textAlign='center';q.fillText('P',16,10);q.font='bold 5px monospace';q.fillText(label,16,17);})}));sg.position.set(1.15,1.45,1.05);g.add(sg);g.position.set(32.1,yb,zc);g.rotation.y=0;sc.add(g);return g;}
-portal(.2,'SAÍDA','#1f8f4a');portal(20.9,'ENTRADA','#c42b2b');
-const PKC={i:{m:mkCar(0x3b82d6),z:-9,on:0,cd:6},o:{m:mkCar(0xd64f3a),z:1,on:0,cd:14}};PKC.i.m.visible=PKC.o.m.visible=false;
+portal(1.5,'SAÍDA','#1f8f4a');portal(20.9,'ENTRADA','#c42b2b');
+{const y=gb(33.4,2.9);bx(sc,.05,1.3,.05,33.4,y+.65,2.9,0x666666);const ns=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:cvx(16,16,q=>{q.fillStyle='#c42b2b';q.beginPath();q.arc(8,8,7.5,0,7);q.fill();pxl(q,'#ffffff',3,7,10,2);}),transparent:true,side:THREE.DoubleSide}));ns.position.set(33.4,y+1.35,2.9);ns.rotation.y=Math.PI;sc.add(ns);}
+const PKC={i:{m:mkCar(0x3b82d6),z:-9,on:0,cd:6},o:{m:mkCar(0xd64f3a),z:2.6,on:0,cd:14}};PKC.i.m.visible=PKC.o.m.visible=false;
 CARS.push({m:mkCar(0x6dbf5a),p:32.4,ax:1,dir:1,sp:2.2,u:40},{m:mkCar(0xf2c94c),p:31.55,ax:1,dir:-1,sp:2.0,u:20});
 // police car: now and then at night it leaves the station on an emergency, sirens wailing, and comes back later
-const PE={st:0,cd:25,z:-3.05};
+const PE={st:0,cd:25,z:1.9};
 function sirenWail(){if(!AX||!SET.sfx)return;try{const t=AX.currentTime,o=AX.createOscillator(),g=AX.createGain(),v=.05*SET.sfx;o.type='square';o.connect(g);g.connect(AX.destination);g.gain.setValueAtTime(v,t);for(let i=0;i<6;i++)o.frequency.setValueAtTime(i%2?740:560,t+i*.38);g.gain.setValueAtTime(v,t+2.1);g.gain.linearRampToValueAtTime(0,t+2.5);o.start(t);o.stop(t+2.6);}catch(e){}}
-function policeRun(rt){const c=POL.car;if(!c)return;const base=Hs(32.1),py=Hs(31.2);
-if(S.ph==='setup'&&PE.st){PE.st=0;PE.cd=40;c.position.set(31.2,py,-3.05);c.rotation.y=0;c.visible=true;return;}
-if(PE.st===0){if(S.ph==='night'&&rt>0){PE.cd-=rt;if(PE.cd<=0){PE.st=1;PE.z=-3.05;sirenWail();toast('Sirens! The police car races off on an emergency.','🚨');}}return;}
-if(PE.st===1){PE.z+=rt*5.5;const k=Math.max(0,Math.min(1,(PE.z+3.05)/3.2));c.position.set(31.2+1.2*k,py+(base-py)*k-(PE.z>20.5?Math.min(1.6,(PE.z-20.5)*1.15):0),PE.z);c.rotation.y=-Math.PI/2;if(PE.z>22.2){PE.st=2;PE.cd=20+Math.random()*25;c.visible=false;}return;}
-if(PE.st===2){PE.cd-=rt;if(PE.cd<=0){PE.st=3;PE.z=1.3;c.visible=true;}return;}
-PE.z-=rt*3.5;const k=Math.max(0,Math.min(1,(-PE.z)/3.05));c.position.set(31.55-.35*k,(PE.z>0?base-Math.max(0,Math.min(1.6,(PE.z+.6)*1.15)):base+(py-base)*k),PE.z);c.rotation.y=Math.PI/2;
-if(PE.z<=-3.05){PE.st=0;PE.cd=45+Math.random()*60;c.position.set(31.2,py,-3.05);c.rotation.y=0;}}
-function parkAnim2(rt){const base=Hs(32.1),I=PKC.i,O=PKC.o;
-if(!I.on){I.cd-=rt;if(I.cd<=0&&S.ph!=='setup'){I.on=1;I.z=-8;I.cd=14+Math.random()*16;I.m.visible=true;}}else{I.z+=rt*3;I.m.position.set(32.4,base+(I.z>20.5?-Math.min(1.6,(I.z-20.5)*1.15):0),I.z);I.m.rotation.y=-Math.PI/2;if(I.z>22.2){I.on=0;I.m.visible=false;}}
-if(!O.on){O.cd-=rt;if(O.cd<=0&&S.ph!=='setup'){O.on=1;O.z=1.3;O.cd=16+Math.random()*18;O.m.visible=true;}}else{O.z-=rt*2.4;O.m.position.set(31.55,base-Math.max(0,Math.min(1.6,(O.z+.6)*1.15)),O.z);O.m.rotation.y=Math.PI/2;if(O.z<-8){O.on=0;O.m.visible=false;}}}
+function policeRun(rt){const c=POL.car;if(!c)return;const HX=30.55,HZ=1.9,LX=31.55;
+if(S.ph==='setup'&&PE.st){PE.st=0;PE.cd=40;c.position.set(HX,gb(HX,HZ),HZ);c.rotation.y=Math.PI/2;c.visible=true;return;}
+if(PE.st===0){if(S.ph==='night'&&rt>0){PE.cd-=rt;if(PE.cd<=0){PE.st=1;PE.z=HZ;sirenWail();toast('Sirens! The police car races off on an emergency.','🚨');}}return;}
+if(PE.st===1){PE.z-=rt*5.5;const k=Math.max(0,Math.min(1,(HZ-PE.z)/1.6)),x=HX+(LX-HX)*k;c.position.set(x,gb(x,PE.z),PE.z);c.rotation.y=Math.PI/2;if(PE.z<-8){PE.st=2;PE.cd=20+Math.random()*25;c.visible=false;}return;}
+if(PE.st===2){PE.cd-=rt;if(PE.cd<=0){PE.st=3;PE.z=-8;c.visible=true;}return;}
+PE.z+=rt*3.5;const k=Math.max(0,Math.min(1,(HZ-PE.z)/1.6)),x=HX+(LX-HX)*k;c.position.set(x,gb(x,Math.min(PE.z,HZ)),Math.min(PE.z,HZ));c.rotation.y=-Math.PI/2;
+if(PE.z>=HZ){PE.st=0;PE.cd=45+Math.random()*60;c.position.set(HX,gb(HX,HZ),HZ);c.rotation.y=Math.PI/2;}}
+function parkAnim2(rt){const I=PKC.i,O=PKC.o;
+if(!I.on){I.cd-=rt;if(I.cd<=0&&S.ph!=='setup'){I.on=1;I.z=-8;I.cd=14+Math.random()*16;I.m.visible=true;}}else{I.z+=rt*3;I.m.position.set(32.4,gb(32.4,Math.min(I.z,19.8))+(I.z>20.5?-Math.min(1.6,(I.z-20.5)*1.15):0),I.z);I.m.rotation.y=-Math.PI/2;if(I.z>22.2){I.on=0;I.m.visible=false;}}
+if(!O.on){O.cd-=rt;if(O.cd<=0&&S.ph!=='setup'){O.on=1;O.z=2.6;O.cd=16+Math.random()*18;O.m.visible=true;}}else{O.z-=rt*2.4;O.m.position.set(31.55,gb(31.55,Math.min(O.z,.4))-Math.max(0,Math.min(1.6,(O.z-.4)*1.15)),O.z);O.m.rotation.y=Math.PI/2;if(O.z<-8){O.on=0;O.m.visible=false;}}}
 // old phone box in the south-east corner of the square
 const PHB={g:new THREE.Group(),st:0,t:0,cd:200,until:0};{const g=PHB.g,r=0xb3261e;bx(g,.7,.12,.7,0,.06,0,0x6e6a62);for(const [x,z] of [[-.3,-.3],[.3,-.3],[-.3,.3],[.3,.3]])bx(g,.07,1.7,.07,x,.9,z,r);bx(g,.74,.1,.74,0,1.78,0,r);bx(g,.5,.08,.5,0,1.88,0,r);bx(g,.56,1.3,.03,0,1.0,-.32,0x9fc5c8,1);bx(g,.03,1.3,.56,-.32,1.0,0,0x9fc5c8,1);bx(g,.03,1.3,.56,.32,1.0,0,0x9fc5c8,1);bx(g,.56,.18,.06,0,1.62,.33,0xfff2c0,1);bx(g,.08,.3,.05,.2,.9,-.28,0x333333,1);g.position.set(43.6,gb(43.6,20.1),20.1);g.rotation.y=.4;sc.add(g);}
 const CALLER=genChar('local','caller',{top:'jacket',topc:'#8a1c1c',hat:'none',acc:'none',face:'stubble'});CALLER.visible=false;sc.add(CALLER);

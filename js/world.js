@@ -17,11 +17,15 @@ const PLt=(col,x,y,z,d)=>{const l=new THREE.PointLight(col,0,d);l.position.set(x
 const L1=PLt(0xff2d6f,12,3,6,16),L2=PLt(0x3ad0ff,12.5,3,15,16),LA=PLt(0xffc27a,24.5,2.8,2.5,10),LB=PLt(0xffc27a,24.5,2.8,19.5,10),LC=PLt(0xffc27a,6.5,2.6,10.5,10),LD=PLt(0xffc27a,17.5,2.6,10.5,10);
 // pixel-art floor (generated, no image assets)
 // ================= terrain: the market sits on a raised granite platform; the land falls away to the square =================
-const DROP=1.6;
-const Hp=x=>x<0?Math.min(1.4,-.1*x):x<=28.9?0:x<=29?-DROP*(x-28.9)/.1:-DROP-.03*(x-29);
-const Hs=x=>x<0?Math.min(1.4,-.1*x):x<=14?0:x<=29?-DROP*(x-14)/15:-DROP-.03*(x-29);
-const gb=(x,z)=>(z>=0&&z<=21)?Hp(x):Hs(x);
-function gy(x,z){if(z>=0&&z<=21&&x>=28.9&&x<=30.7){if(z>=8.2&&z<=13.1)return 0;if(z>=3&&z<8.2)return -DROP*(1-(z-3)/5.2);if(z>13.1&&z<=18.3)return -DROP*(1-(18.3-z)/5.2);}return gb(x,z);}
+// the square falls away twice as far at the east (police) end as at the west (garage) end, so the base is two storeys on one side and one on the other;
+// Rua Ferreira Borges (west) climbs to the hall floor, the east street stays below the platform all along, and the north street climbs on up the hill
+const DE=3.3,DW=1.7,DROP=DW;
+const c01=v=>v<0?0:v>1?1:v,dzF=z=>DE+(DW-DE)*c01(z/21),Ye=x=>-1-(DE-1)*c01(x/29),Yw=x=>x<=14?0:-DW*c01((x-14)/15);
+function Hs(x,z){if(z===undefined)z=10.5;if(x<0)return -1+c01(z/21)+Math.min(1.4,-.1*x);if(x<29){const f=c01(z/21);return Ye(x)*(1-f)+Yw(x)*f;}return -dzF(z)-.03*(x-29);}
+function Hp(x,z){if(z===undefined)z=10.5;if(x<0)return Hs(x,z);if(x>27.01&&x<29&&z>6.01&&z<14.99)return Hs(29.05,z);if(x<=28.9)return 0;if(x<29)return Hs(29,z)*(x-28.9)/.1;return Hs(x,z);}
+const gb=(x,z)=>(z>=0&&z<=21)?Hp(x,z):Hs(x,z);
+function gy(x,z){if(x>=27.02&&x<=29&&z>=6&&z<=15){const mid=-1.25,o=x>=27.96;if(z>=9.7&&z<=11.3)return 0;if(z<=6.7||z>=14.3)return mid;if(z<9.7){if(o){const g=Hs(29.05,9.7);return g+(mid-g)*(9.7-z)/3;}return mid*(9.7-z)/3;}if(o){const g=Hs(29.05,11.3);return g+(mid-g)*(z-11.3)/3;}return mid*(z-11.3)/3;}
+if(z>=-.95&&z<-.02&&x>=4.6&&x<=15.4){if(x>=9.6&&x<=10.8)return 0;if(x<9.6)return Ye(4.6)*(1-(x-4.6)/5);return Ye(15.4)*(1-(15.4-x)/4.6);}return gb(x,z);}
 function terrG(xs,zs,fy,fu,fv){const P=[],U=[],I=[],nx=xs.length;for(let j=0;j<zs.length;j++)for(let i=0;i<nx;i++){P.push(xs[i],fy(xs[i],zs[j]),zs[j]);U.push(fu(xs[i]),fv(zs[j]));}
 for(let j=0;j<zs.length-1;j++)for(let i=0;i<nx-1;i++){const a=j*nx+i,b=(j+1)*nx+i,c2=j*nx+i+1,d=(j+1)*nx+i+1;I.push(a,b,c2,c2,b,d);}
 const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));g.setIndex(I);g.computeVertexNormals();return g;}
@@ -45,17 +49,23 @@ q2.fillStyle='#3d3d45';q2.fillRect(31.3*CS,0,1.6*CS,21*CS);q2.fillStyle='#c8c3b6
 const FT_=(s,x,z,sz,col)=>{q2.save();q2.translate(x*CS,z*CS);q2.fillStyle=col;q2.font='bold '+sz+'px Silkscreen,monospace';q2.textAlign='center';q2.fillText(s,0,0);q2.restore();};
 FT_('ROOM 1',11,6.2,26,'rgba(255,255,255,.13)');FT_('ROOM 2',12.5,15.4,26,'rgba(255,255,255,.13)');FT_('PRAÇA DO INFANTE D. HENRIQUE',38,1.1,12,'rgba(0,0,0,.2)');
 const ft=new THREE.CanvasTexture(cv);ft.magFilter=ft.minFilter=THREE.NearestFilter;ft.generateMipmaps=false;
-const fxs=[];for(let x=0;x<=28;x++)fxs.push(x);fxs.push(28.9,29);for(let x=30;x<=W;x++)fxs.push(x);const fzs=[];for(let z=0;z<=H;z++)fzs.push(z);
-const fl=new THREE.Mesh(terrG(fxs,fzs,(x,z)=>Hp(x),x=>x/W,z=>1-z/H),new THREE.MeshLambertMaterial({map:ft}));fl.receiveShadow=true;sc.add(fl);
-const gr=new THREE.Mesh(new THREE.PlaneGeometry(260,260),mt(0x6f6d73));gr.rotation.x=-Math.PI/2;gr.position.set(W/2,-3.4,H/2);gr.receiveShadow=true;sc.add(gr);
+const fxs=[];for(let x=0;x<=28;x++){fxs.push(x);if(x===27)fxs.push(27.02);}fxs.push(28.9,29);for(let x=30;x<=W;x++)fxs.push(x);const fzs=[];for(let z=0;z<=H;z++){fzs.push(z);if(z===6)fzs.push(6.02);if(z===14)fzs.push(14.98);}
+const fl=new THREE.Mesh(terrG(fxs,fzs,(x,z)=>Hp(x,z),x=>x/W,z=>1-z/H),new THREE.MeshLambertMaterial({map:ft}));fl.receiveShadow=true;sc.add(fl);
+const gr=new THREE.Mesh(new THREE.PlaneGeometry(260,260),mt(0x6f6d73));gr.rotation.x=-Math.PI/2;gr.position.set(W/2,-5.6,H/2);gr.receiveShadow=true;sc.add(gr);
 // ---------- architecture (cast-iron hall, glass, granite, gables) ----------
 ARC=[];const WALLS=[],RW=[],RED=0xb3261e,STONE=0xa39d90,GOLD=0xc9a24b;let CUT=false;
 const coll=(x0,y0,x1,y1)=>WALLS.push(x0===x1?[x0-.15,y0,x0+.15,y1]:[x0,y0-.15,x1,y0+.15]);
 function colm(x,z,h){bx(sc,.28,.2,.28,x,.1,z,0x6e6a62);bx(sc,.15,h,.15,x,h/2+.1,z,RED);bx(sc,.3,.14,.3,x,h+.17,z,GOLD);}
 function bulb(x,y,z){const m=new THREE.Mesh(gm(.07,.07,.07),BM);m.position.set(x,y,z);sc.add(m);}
-function iron(x0,z0,x1,z1){coll(x0,z0,x1,z1);const v=x0===x1,L=v?z1-z0:x1-x0,n=Math.max(1,Math.round(L/2.2)),st=L/n,mx=(x0+x1)/2,mz=(z0+z1)/2;
-bx(sc,v?.34:L,.5,v?L:.34,mx,.25,mz,STONE);bx(sc,v?.1:L,1.55,v?L:.1,mx,1.3,mz,GLS,1);bx(sc,v?.24:L,.22,v?L:.24,mx,2.4,mz,RED);
-for(let i=0;i<=n;i++)colm(v?x0:x0+i*st,v?z0+i*st:z0,2.15);for(let p=.3;p<L;p+=.6)bulb(v?x0+.2:x0+p,2.2,v?z0+p:z0+.2);}
+// side walls as in the photos: granite plinth, blue-grey panel, then tall arched louvred windows between red cast-iron pilasters (they fade when you zoom in so the floor stays visible)
+const PNL=new THREE.MeshLambertMaterial({color:0x7c8aa3,transparent:true}),LVT=cvx(16,16,q=>{pxl(q,'#5b7466',0,0,16,16);for(let y=0;y<16;y+=2)pxl(q,'#34483d',0,y,16,1);pxl(q,'#b3261e',7,0,2,16);});LVT.wrapS=LVT.wrapT=THREE.RepeatWrapping;
+const LVM=new THREE.MeshLambertMaterial({map:LVT,transparent:true,side:THREE.DoubleSide,depthWrite:false});PNL.userData={lo:.35,hi:1};LVM.userData={lo:.16,hi:.93};const FADEM=[PNL,LVM];
+function iron(x0,z0,x1,z1){coll(x0,z0,x1,z1);const v=x0===x1,L=v?z1-z0:x1-x0,n=Math.max(1,Math.round(L/2.2)),st=L/n,mx=(x0+x1)/2,mz=(z0+z1)/2,fr=v?(x0>11?1:-1):(z0>10?1:-1);
+bx(sc,v?.36:L,.14,v?L:.36,mx,.07,mz,STONE);bx(sc,v?.16:L,.78,v?L:.16,mx,.53,mz,PNL,1);bx(sc,v?.1:L,1.4,v?L:.1,mx,1.62,mz,GLS,1);bx(sc,v?.2:L,.07,v?L:.2,mx,.94,mz,RED,1);bx(sc,v?.24:L,.22,v?L:.24,mx,2.4,mz,RED);
+for(let i=0;i<=n;i++)colm(v?x0:x0+i*st,v?z0+i*st:z0,2.15);for(let p=.3;p<L;p+=.6)bulb(v?x0+.2:x0+p,2.2,v?z0+p:z0+.2);
+if(!(v&&fr>0))for(let i=0;i<n;i++){const c=(v?z0:x0)+(i+.5)*st,w=st-.44,h=2.33,m=new THREE.Mesh(archGeo(w,h),LVM),o=.21;
+ if(v){m.rotation.y=fr>0?Math.PI/2:-Math.PI/2;m.position.set(x0+fr*o,.98,fr>0?c+w/2:c-w/2);}else{m.rotation.y=fr>0?0:Math.PI;m.position.set(fr>0?c-w/2:c+w/2,.98,z0+fr*o);}sc.add(m);if(ARC)ARC.push(m);
+ bx(sc,v?.04:.36,.04,v?.36:.04,v?x0+fr*o:c,2.0,v?c:z0+fr*o,RED,1);}}
 [[.3,2.1,9.6,2.1],[10.83,2.1,22.45,2.1],[.3,19.15,12.2,19.15],[13.9,19.15,22.45,19.15],[22.45,2.1,22.45,9.36],[22.45,11.96,22.45,19.15],[.3,2.1,.3,19.15]].forEach(w=>iron(...w));
 function wlr(x0,z0,x1,z1,h,col){coll(x0,z0,x1,z1);const v=x0===x1,m=bx(sc,v?.3:x1-x0,h,v?z1-z0:.3,(x0+x1)/2,h/2,(z0+z1)/2,col);RW.push({m,h});}
 [[4.87,2.4,4.87,3.6],[4.87,8.9,4.87,14],[4.87,17,4.87,17.8],[4.87,18.9,4.87,19.1],[5.06,3.35,9.6,3.35],[10.93,3.35,19.6,3.35],[5.06,9.05,8,9.05],[9.23,9.05,19.6,9.05],[19.45,3.35,19.45,5.79],[19.45,6.6,19.45,9.05],
@@ -69,9 +79,13 @@ function archGeo(w,h){const sh=new THREE.Shape();sh.moveTo(0,0);sh.lineTo(w,0);s
 function archMesh(w,h,mat,x,y,zc){const m=new THREE.Mesh(archGeo(w,h),mat);m.rotation.y=Math.PI/2;m.position.set(x,y,zc+w/2);sc.add(m);if(ARC)ARC.push(m);return m;}
 function gbl(zc,w,y0,h){const sh=new THREE.Shape();sh.moveTo(0,0);sh.lineTo(w,0);sh.lineTo(w/2,h);sh.lineTo(0,0);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.16,bevelEnabled:false}),mt(RED));m.rotation.y=-Math.PI/2;m.position.set(FX+.14,y0,zc-w/2);m.castShadow=true;sc.add(m);if(ARC)ARC.push(m);return m;}
 for(const [zc,w] of [[5.73,7.26],[15.555,7.19]]){bx(sc,.12,.55,w,FX+.04,.78,zc,0xeae5d8);bx(sc,.16,1.1,w,FX+.06,2.95,zc,RED);gbl(zc,w,3.5,1.4);
- for(const dz of [-1.75,1.75])archMesh(1.7,2.3,winMat('lv',1.7,2.3),FX+.16,1.0,zc+dz);archMesh(.9,1.1,winMat('lv',.9,1.1),FX+.16,3.55,zc);}
+ for(const dz of [-1.75,1.75])archMesh(1.7,2.3,winMat('lv',1.7,2.3),FX+.16,1.0,zc+dz);archMesh(2.0,1.0,winMat('lv',2.0,1.0),FX+.16,3.52,zc);}
 bx(sc,.2,2.6,3.6,FX+.08,3.7,10.66,RED);gbl(10.66,3.6,5.0,1.0);archMesh(2.4,3.4,winMat('gl',2.4,3.4),FX+.2,1.3,10.66);
 bx(sc,.2,1.3,.2,FX+.1,.65,9.4,RED);bx(sc,.2,1.3,.2,FX+.1,.65,11.92,RED);bx(sc,.12,.2,2.7,FX+.1,1.35,10.66,RED);for(let z=9.7;z<11.7;z+=.25)bx(sc,.04,.45,.04,FX+.1,1.1,z,0x2a2a30,1);
+// side entrances: a tall glazed arch over the doorway with an ornate red iron gate (west entrance at street level, east entrance reached by the twin stairs)
+for(const [cx,z,fr,w] of [[10.215,2.1,-1,1.23],[13.05,19.15,1,1.7]]){const m=new THREE.Mesh(archGeo(w,2.0),winMat('gl',w,2.0));m.rotation.y=fr>0?0:Math.PI;m.position.set(fr>0?cx-w/2:cx+w/2,1.35,z+fr*.22);sc.add(m);ARC.push(m);
+ bx(sc,w+.1,.1,.08,cx,1.33,z+fr*.24,RED,1);for(let x=-w/2+.06;x<w/2;x+=.1){bx(sc,.025,.16,.025,cx+x,1.45,z+fr*.25,RED,1);bx(sc,.04,.04,.04,cx+x,1.54,z+fr*.25,GOLD,1);}
+ for(const sd of [-1,1]){const g=new THREE.Group();for(let k=0;k<5;k++)bx(g,.025,1.2,.025,.05+k*.1,.62,0,RED,1);bx(g,.5,.05,.03,.25,1.2,0,RED,1);bx(g,.5,.05,.03,.25,.1,0,RED,1);bx(g,.5,.05,.03,.25,.7,0,GOLD,1);g.position.set(cx+sd*w/2,0,z+fr*.27);g.rotation.y=sd>0?Math.PI+fr*1.25:-fr*1.25;sc.add(g);}}
 const XRM=ARC;ARC=null;
 // glazed roof with iron trusses (casts light stripes)
 const roof=new THREE.Group();sc.add(roof);for(let x=1.5;x<22.5;x+=3)bx(roof,.12,.12,17.05,x,3.1,10.6,RED);bx(roof,22.2,.12,.12,11.5,3.1,10.6,RED);bx(roof,22.2,.05,17.05,11.5,3.1,10.6,RGL,1);
@@ -87,9 +101,7 @@ bx(roofTop,22.3,.14,.14,11.35,6.14,10.65,RRD.color.getHex(),1);
 // exterior upper wall band + arched windows on the sides and back (real hall has red iron walls, arched louvres, white plaster base)
 for(const z of [2.1,19.15]){bx(sc,22.2,1.1,.3,11.4,2.95,z,RED);bx(sc,22.2,.12,.34,11.4,2.45,z,0xeae5d8);}
 bx(sc,.3,1.1,17.2,.3,2.95,10.65,RED);bx(sc,.34,.12,17.2,.3,2.45,10.65,0xeae5d8);
-for(let x=1.3;x<22;x+=2.2){const a=archGeo(1.1,1.0),m1=new THREE.Mesh(a,winMat('lv',1.1,1.0)),m2=new THREE.Mesh(a,winMat('lv',1.1,1.0));m1.rotation.y=Math.PI;m1.position.set(x+.55,2.5,1.93);m2.position.set(x-.55,2.5,19.32);sc.add(m1,m2);}
-for(let z=3.1;z<19;z+=2.2){const m=new THREE.Mesh(archGeo(1.1,1.0),winMat('lv',1.1,1.0));m.rotation.y=-Math.PI/2;m.position.set(.13,2.5,z-.55);sc.add(m);}
-function roofLOD(){const hw=(typeof VW!=='undefined'&&VW.hw)||10,op=Math.max(0,Math.min(1,(hw-12.5)/4.5));ROOFM.forEach(m=>m.opacity=op);roofTop.visible=op>.03;}
+function roofLOD(){const hw=(typeof VW!=='undefined'&&VW.hw)||10,op=Math.max(0,Math.min(1,(hw-12.5)/4.5));ROOFM.forEach(m=>m.opacity=op);FADEM.forEach(m=>m.opacity=m.userData.lo+(m.userData.hi-m.userData.lo)*op);roofTop.visible=op>.03;}
 // stages with lighting trusses, speakers and bars
 const SL=[];function stage(cx,cz,w,d,tx,tz,vz,r){bx(sc,w,.3,d,cx,.15,cz,0x6b4f3a);bx(sc,.12,1.8,.12,tx,.9,tz-vz/2,0x555a66);bx(sc,.12,1.8,.12,tx,.9,tz+vz/2,0x555a66);bx(sc,.12,.12,vz,tx,1.8,tz,0x555a66);
 for(let i=0;i<5;i++){const m=new THREE.Mesh(gm(.16,.16,.16),new THREE.MeshBasicMaterial({color:0x333340}));m.position.set(tx,1.68,tz-vz/2+.4+i*(vz-.8)/4);sc.add(m);SL.push({m,r});}
