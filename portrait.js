@@ -1,4 +1,4 @@
-TESTX/* portrait.js - new character portraits and the stall card look.
+/* portrait.js - new character portraits and the stall card look.
    Portraits: 64x64 hand-built pixel art with a transparent background, thick ink linework, 3-tone cel shading with dithering,
    big expressive faces (adventure-game cartoon style). Replaces the old 32x32 drawPortrait.
    Stall card: no box behind the avatar, no white speech box: glowing arcade lettering with a typewriter quote and a tagline. */
