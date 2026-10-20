@@ -282,11 +282,13 @@ function buy(k){var r=st.r,u=st.u,o=st.o,cost=0;
   snd('level');sv();topUpdate();openUp(true);}
 
 /* ---------- hooks into the game ---------- */
-function inject(){try{if(typeof SP==='undefined'||!SP)return;var h=document.getElementById('sph');if(!h||h.querySelector('.mgplay'))return;if(!tpl(SP.i))return;
+function relabel(){try{var h=document.getElementById('sph');if(!h||!SP)return;[].forEach.call(h.querySelectorAll('button[data-a="up"]'),function(b){var k=b.dataset.k,L=SP.u[k];if(L>=3||b.dataset.tp)return;b.textContent=b.textContent.replace(/\s*\u20ac\d+/,'')+' \u00b7 '+stallCost(SP,k,L)+' \ud83d\udcb0 Tips';b.dataset.tp='1';});}catch(e){}}
+function inject(){try{if(typeof SP==='undefined'||!SP)return;relabel();var h=document.getElementById('sph');if(!h||h.querySelector('.mgplay'))return;if(!tpl(SP.i))return;
   var d=document.createElement('div');d.className='p';d.innerHTML='<button class="mgplay">🎮 Play mini-tycoon · 💰 '+Math.floor(MG.tips)+' Tips</button><span class="m">Serve customers, earn Tips, hire workers, upgrade this stall.</span>';h.insertBefore(d,h.firstChild);}catch(e){}}
 var orp=window.renderSP;
 if(typeof orp==='function'){window.renderSP=function(){var r=orp.apply(this,arguments);inject();return r;};}
 document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('.mgplay'):null;if(!b)return;e.stopPropagation();e.preventDefault();try{open(SP);}catch(x){}},true);
+document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('#spn button[data-a="up"]'):null;if(!b)return;e.stopPropagation();e.preventDefault();try{open(SP);if(st)openUp(true);else toast('No mini-tycoon here yet','\u2139\ufe0f');}catch(x){}},true);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&st)close();});
 var ots=window.tickStalls;
 if(typeof ots==='function'){window.tickStalls=function(dm){var r=ots.apply(this,arguments);try{if(!st&&S&&(S.ph==='day'||S.ph==='night')){stalls.forEach(function(s){if(s.st!=='open')return;var q=MG.t[s.i];if(q&&q.w>0){MG.tips+=dm*.012*q.w*unit(s.i);dirty=true;}});}}catch(e){}return r;};}
