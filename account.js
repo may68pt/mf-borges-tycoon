@@ -23,7 +23,7 @@ function snap(){
 const sigOf=p=>JSON.stringify({S:p.S,s:p.stalls});
 function valid(p){
   if(!p||typeof p!=='object'||p.v!==1||!p.S||typeof p.S!=='object'||!Array.isArray(p.stalls))return false;
-  if(!Number.isFinite(p.S.day)||p.S.day<1||p.S.day>DAYS+1||!Number.isFinite(p.S.cash)||p.stalls.length>300)return false;
+  if(!Number.isFinite(p.S.day)||p.S.day<1||p.S.day>(p.S.mode==='classic'?DAYS+1:100000)||!Number.isFinite(p.S.cash)||p.stalls.length>300)return false;
   const seen=new Set();
   for(const r of p.stalls){
     if(!r||!Number.isInteger(r.i)||r.i<0||r.i>=ST.length||!Number.isInteger(r.x)||!Number.isInteger(r.z)||r.x<0||r.z<0||r.x>=W||r.z>=H)return false;
@@ -105,7 +105,7 @@ let onClose=null;
 function open(html,close){M.innerHTML='<div>'+html+'</div>';M.style.display='flex';onClose=close||null;}
 function shut(){M.style.display='none';M.innerHTML='';const f=onClose;onClose=null;if(f)f();}
 const when=iso=>{try{return new Date(iso).toLocaleString();}catch(e){return iso;}};
-const desc=(p,at)=>'Day '+Math.min(p.S.day,DAYS)+'/'+DAYS+' · €'+Math.round(p.S.cash)+' · '+BL.filter(x=>p.S.band&&p.S.band[x.id]&&p.S.band[x.id].plays>0).length+' acts · '+(p.stalls.length)+' stalls<br><span class="m">saved '+esc(when(at||p.savedAt))+'</span>';
+const desc=(p,at)=>(p.S.mode==='classic'?'Day '+Math.min(p.S.day,DAYS)+'/'+DAYS:'Day '+p.S.day+' · '+(p.S.star||5)+'★')+' · €'+Math.round(p.S.cash)+' · '+BL.filter(x=>p.S.band&&p.S.band[x.id]&&p.S.band[x.id].plays>0).length+' acts · '+(p.stalls.length)+' stalls<br><span class="m">saved '+esc(when(at||p.savedAt))+'</span>';
 const legal='<a href="'+esc(CFG.legalUrl||'legal.html')+'#privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="'+esc(CFG.legalUrl||'legal.html')+'#terms" target="_blank" rel="noopener">Terms</a>';
 
 function signInView(){

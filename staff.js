@@ -8,7 +8,7 @@
 'use strict';
 if(window.mfbStaff||/[?&]noesm/.test(location.search))return;
 function g(n){try{return (0,eval)(n);}catch(e){return undefined;}}
-var E=window.mfbEsm,S=g('S'),ESM=g('ESM'),R=g('R'),stalls=g('stalls'),ST=g('ST');
+var E=window.mfbEsm,ESM=g('ESM'),R=g('R'),stalls=g('stalls'),ST=g('ST');
 if(!E||!E.goTo||!S||!ESM||!R||!R.render||!stalls||!ST)return;
 function rnd(n){return Math.floor(Math.random()*n);}
 function one(a){return a[rnd(a.length)];}

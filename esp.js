@@ -6,7 +6,7 @@
 'use strict';
 if(window.mfbEsp||/[?&]noesm/.test(location.search))return;
 function g(n){try{return (0,eval)(n);}catch(e){return undefined;}}
-var T=window.THREE,ESM=g('ESM'),S=g('S'),E=window.mfbEsm;
+var T=window.THREE,ESM=g('ESM'),E=window.mfbEsm;
 if(!T||!ESM||!S||!E)return;
 var origClick=window.click;if(typeof origClick!=='function')return;
 function rnd(n){return Math.floor(Math.random()*n);}
@@ -16,7 +16,7 @@ function snd(n){try{g('sfx')(n);}catch(e){}}
 
 /* ---------- facts about the market ---------- */
 function facts(){
-  var f={cash:Math.round(S.cash||0),cul:Math.round(S.cul||0),hyp:Math.round(S.hyp||0),her:Math.round(S.her||0),lv:S.lv||1,xp:S.xp||0,day:S.day||1,days:g('DAYS')||30,
+  var f={cash:Math.round(S.cash||0),cul:Math.round(S.cul||0),hyp:Math.round(S.hyp||0),her:Math.round(S.her||0),lv:S.lv||1,xp:S.xp||0,day:S.day||1,days:(window.mfbCareer?S.day+mfbCareer.left():(g('DAYS')||30)),
     sales:S.sales||0,foot:S.foot||1,tide:Math.round(S.tide||0),ph:S.ph,ev:S.ev||{n:'Clear day',f:1},n:0,max:0,best:null,worst:null,gigs:S.gigs||0,top:null,wk:''};
   try{f.n=g('nStalls')();f.max=g('maxS')();}catch(e){}
   try{var dn=g('DN'),dw=g('dow')();f.wk=dn[dw];}catch(e){}

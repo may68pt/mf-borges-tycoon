@@ -1,6 +1,6 @@
 /* MF Borges Tycoon - econ module (split from the single-file game; loads in order, shares global scope) */
 // ---- progression ----
-const need=l=>100+50*(l-1),lvl=()=>S.lv,maxS=()=>4+2*S.lv+S.bonus,nStalls=()=>{let n=0;for(const s of stalls.values())if(ST[s.i][1]!=='amen'&&ST[s.i][1]!=='lure')n++;return n;};
+const need=l=>100+50*(l-1),lvl=()=>S.lv,maxS=()=>Math.max(2,4+2*S.lv+S.bonus+(window.mfbCareer?mfbCareer.slots():0)),nStalls=()=>{let n=0;for(const s of stalls.values())if(ST[s.i][1]!=='amen'&&ST[s.i][1]!=='lure')n++;return n;};
 function toast(m,i){const e=document.createElement('div');e.className='toast px';e.textContent=i+' '+m;e.style.top=(64+document.querySelectorAll('.toast').length*46)+'px';$('stage').appendChild(e);setTimeout(()=>e.remove(),4200);}
 function gainXP(x){if(S.over)return;S.xp+=x;while(S.xp>=need(S.lv)&&S.lv<14){S.xp-=need(S.lv);S.lv++;const un=ST.filter(d=>d[10]===S.lv).map(d=>d[12]+d[0]);toast('LEVEL '+S.lv+'! Stall limit '+maxS()+'.'+(un.length?' Unlocked: '+un.slice(0,4).join(', ')+(un.length>4?'...':''):''),'⭐');sfx('level');}}
 const GDEF=[['Serve {n} clients today',()=>S.sales,20,40,120],['Earn €{n} today',()=>S.earn,500,50,150],['Have {n} stall types open',()=>new Set([...stalls.values()].map(s=>s.i)).size,4,30,100],['Host an event tonight',()=>S.evt,1,40,150],['Serve {n} drinks at the bars',()=>S.bars,15,40,120],['Open stalls in {n} categories',()=>new Set([...stalls.values()].map(s=>ST[s.i][1])).size,3,40,120]];

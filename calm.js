@@ -23,7 +23,7 @@ var css=[
 '@keyframes calmfade{from{opacity:0}to{opacity:1}}@keyframes calmup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}',
 '@media (prefers-reduced-motion:reduce){#toasts .tn,body.u2 #nr,body.u2 #nr>div,body.u2 #spn{animation:none}}',
 /* essentials mode: hide the secondary HUD readouts and helper text */
-'body.calm #hud .bar,body.calm #lims,body.calm #hud #sl{display:none}',
+'body.calm #hud .bar,body.calm #lims{display:none}',
 'body.calm #tg>p.m{display:none}',
 '#calmtog{margin-left:4px}',
 /* the speed button in the top bar must receive taps on phones */

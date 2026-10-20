@@ -6,7 +6,7 @@
 'use strict';
 if(window.mfbEsm||/[?&]noesm/.test(location.search))return;
 function g(n){try{return (0,eval)(n);}catch(e){return undefined;}}
-var T=window.THREE,R=g('R'),ESM=g('ESM'),EM=g('EM'),S=g('S');
+var T=window.THREE,R=g('R'),ESM=g('ESM'),EM=g('EM');
 if(!T||!R||!R.render||!ESM||!EM||!S)return;
 var E=window.mfbEsm={mood:'sweet',state:'roam',fights:0};
 function rnd(n){return Math.floor(Math.random()*n);}
