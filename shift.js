@@ -55,6 +55,21 @@ var css=[
 '#mg .sh-btn{display:block;width:100%;min-height:46px;margin:7px 0 0;border-radius:12px;border:3px solid #111;font-weight:900;font-size:15px;color:#fff;background:#2e9e5b;cursor:pointer;font-family:inherit}#mg .sh-btn.alt{background:#34406e;font-size:13px;min-height:40px}#mg .sh-btn.gold{background:#d9a441;color:#111}',
 '#mg .sh-rare{position:absolute;left:50%;top:26%;transform:translateX(-50%);z-index:40;background:#fff4c2;color:#111;border:4px solid #d9a441;border-radius:14px;padding:8px 14px;text-align:center;font-weight:900;animation:shpop .5s both;box-shadow:0 0 30px #ffd166;pointer-events:none}#mg .sh-rare b{display:block;font-size:40px}',
 '#mg .sh-col{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}#mg .sh-col div{background:rgba(255,255,255,.07);border-radius:8px;padding:6px 2px;font-size:10px;line-height:1.15}#mg .sh-col div b{display:block;font-size:26px}#mg .sh-col .no{opacity:.35;filter:grayscale(1)}',
+'#mg .sh-path{display:flex;align-items:center;justify-content:center;gap:0;margin:6px 0 8px}#mg .sh-path .n{position:relative;width:46px;text-align:center;font-size:10px;opacity:.55}#mg .sh-path .n b{display:flex;align-items:center;justify-content:center;width:34px;height:34px;margin:0 auto 2px;border-radius:50%;background:#2a2d55;border:3px solid #111;font-size:15px}',
+'#mg .sh-path .n.cur{opacity:1}#mg .sh-path .n.cur b{background:#7b5cff;box-shadow:0 0 0 3px #ffd166,0 0 14px #7b5cff;animation:shpulse 1.2s infinite}#mg .sh-path .n.done{opacity:.9}#mg .sh-path .n.done b{background:#2e9e5b}',
+'#mg .sh-path .n::after{content:"";position:absolute;top:16px;left:calc(50% + 17px);width:12px;height:4px;background:#111}#mg .sh-path .n:last-child::after{display:none}',
+'@keyframes shpulse{50%{transform:scale(1.12)}}',
+'#mg .sh-rank{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:8px;background:#34406e;font-size:11px}',
+'#mg .sh-chest{display:block;width:100%;margin:8px 0 0;padding:10px;border-radius:14px;border:3px solid #111;background:linear-gradient(#5b3a1c,#3c2410);color:#ffe27a;font:900 14px inherit;cursor:pointer;animation:shwob 1.1s infinite}#mg .sh-chest b{display:block;font-size:54px;line-height:1.1;filter:drop-shadow(0 0 10px var(--gl,#ffd166))}',
+'#mg .sh-chest.silver{--gl:#cfe3ff;background:linear-gradient(#4a5d7a,#2c3a52)}#mg .sh-chest.gold{--gl:#ffd166;background:linear-gradient(#8a6a14,#5c430a)}#mg .sh-chest.open{animation:shopen .5s forwards}',
+'@keyframes shwob{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg) scale(1.03)}}@keyframes shopen{0%{transform:scale(1) rotate(-6deg)}30%{transform:scale(1.2) rotate(6deg)}100%{transform:scale(0);opacity:0;height:0;padding:0;margin:0;border:0}}',
+'#mg .sh-loot{animation:shfade .4s both}',
+'#mg .sh-conf{position:absolute;top:-10px;font-size:16px;pointer-events:none;z-index:50;animation:shconf 1.6s ease-in forwards}@keyframes shconf{to{transform:translate(var(--dx),115vh) rotate(var(--r));opacity:.9}}',
+'#mg .sh-coin{position:absolute;z-index:45;font-size:20px;pointer-events:none;transition:transform .75s cubic-bezier(.5,-.2,.7,1),opacity .75s;will-change:transform}',
+'#mg .mg-tips.pulse{animation:shtp .3s}@keyframes shtp{50%{transform:scale(1.25);box-shadow:0 0 14px #ffd166}}',
+'#mg .mg-combo[data-l="1"]{font-size:20px;color:#ffb347;text-shadow:0 0 8px #ff7a1a}#mg .mg-combo[data-l="2"]{font-size:26px;color:#ff7a1a;text-shadow:0 0 12px #ff3b00;animation:shpulse .5s infinite}#mg .mg-combo[data-l="3"]{font-size:32px;color:#fff;text-shadow:0 0 14px #ff3b00,0 0 26px #ffd166;animation:shpulse .35s infinite}',
+'#mg .mg-c.go .mg-av{animation:shjoy .5s}@keyframes shjoy{30%{transform:translateY(-14px) scale(1.2)}100%{transform:translateY(0)}}',
+'#mg .sh-ach{display:flex;align-items:center;gap:8px;text-align:left;font-size:12px;padding:5px 8px;margin:4px 0;border-radius:9px;background:rgba(255,255,255,.06)}#mg .sh-ach.on{background:rgba(255,209,102,.18)}#mg .sh-ach b{font-size:20px;width:26px;text-align:center}#mg .sh-ach.off b{filter:grayscale(1);opacity:.4}',
 '#mg .sh-lvtag{display:inline-block;background:#7b5cff;border-radius:8px;padding:1px 8px;font-size:11px;margin-left:6px}'
 ].join('\n');
 var stl=document.createElement('style');stl.textContent=css;document.head.appendChild(stl);
@@ -137,65 +152,131 @@ function milestone(st,L){
   if(!out){var b=Math.round(st.u*40);MG.tips+=b;out='Everything is maxed, so +'+b+' Tips instead';}
   return out;
 }
+/* ranks, achievements, stats */
+var RANKS=[['🌱','Rookie'],['🥉','Regular'],['🥈','Pro'],['🥇','Master'],['👑','Legend']];
+function rankOf(L){return RANKS[L<3?0:L<5?1:L<8?2:L<12?3:4];}
+D.ach=D.ach||{};D.st=D.st||{combo:0,three:0,boss:0};
+try{var _e=JSON.parse(localStorage.getItem(KEY)||'null');if(_e){D.ach=_e.ach||D.ach;D.st=_e.st||D.st;}}catch(e){}
+function maxL(){var m=1;for(var k in D.lv)m=Math.max(m,D.lv[k].L||1);return m;}
+function stallsPlayed(){var n=0;for(var k in D.lv)if(D.lv[k].done>0)n++;return n;}
+var ACH=[
+ ['first','🎬','First shift','Finish any shift',function(){return D.shifts>=1;}],
+ ['three','⭐','Triple star','Get 3 stars on 3 shifts',function(){return D.st.three>=3;}],
+ ['combo','🔥','Combo x10','Reach a x10 combo',function(){return D.st.combo>=10;}],
+ ['boss','🧐','Boss beaten','Clear a boss shift',function(){return D.st.boss>=1;}],
+ ['col','📖','Collector','Find 7 different rare items',function(){return distinct()>=7;}],
+ ['l5','🏅','Level 5','Reach level 5 in any stall',function(){return maxL()>=5;}],
+ ['vet','🎖','Veteran','Finish 25 shifts',function(){return D.shifts>=25;}],
+ ['all','🧭','All-rounder','Finish shifts in 8 different stalls',function(){return stallsPlayed()>=8;}]
+];
+function checkAch(st){
+  var got=[];ACH.forEach(function(a){if(!D.ach[a[0]]&&a[4]()){D.ach[a[0]]=1;var b=Math.round(st.u*15);MG.tips+=b;got.push({e:a[1],n:a[2],b:b});}});
+  if(got.length)save();return got;
+}
+function confetti(n){
+  if(!ov)return;var cs=['🎊','✨','⭐','🎉','💫','🪙'];
+  for(var k=0;k<n;k++){var c=document.createElement('i');c.className='sh-conf';c.textContent=cs[k%cs.length];c.style.left=(Math.random()*100)+'%';c.style.setProperty('--dx',(Math.random()*80-40)+'px');c.style.setProperty('--r',(Math.random()*720-360)+'deg');c.style.animationDelay=(Math.random()*.5)+'s';ov.appendChild(c);(function(x){setTimeout(function(){if(x.parentNode)x.parentNode.removeChild(x);},2300);})(c);}
+}
 function endShift(){
   var st=M.state();if(!S||!S.running||!st)return;S.running=false;st.spawn=1e9;
-  var n=S.starsNow(),p=P(st.i),L=S.L,lines=[],pass=n>=1;
+  var n=S.starsNow(),p=P(st.i),L=S.L,pass=n>=1;
   if(hud){hud.remove();hud=null;}if(obEl){obEl.remove();obEl=null;}
   var bonus=pass?Math.round(st.u*(3+2*L)*n):0;if(bonus){MG.tips+=bonus;}
   var rare=null;if(pass&&(Math.random()<.06+.07*n+.01*L||(S.mod==='boss'&&n===3))){rare=giveRare(st.i);}
-  var mile=null;
-  if(pass){D.shifts++;p.done++;if(n>(p.best[L]||0))p.best[L]=n;if(L>=p.L){p.L=L+1;mile=milestone(st,L);}try{g('gainXP')(2+n*2);}catch(e){}}
+  var mile=null,ach=[];
+  D.st.combo=Math.max(D.st.combo||0,S.maxCombo);
+  if(pass){D.shifts++;p.done++;if(n===3)D.st.three++;if(S.mod==='boss')D.st.boss++;if(n>(p.best[L]||0))p.best[L]=n;if(L>=p.L){p.L=L+1;mile=milestone(st,L);}try{g('gainXP')(2+n*2);}catch(e){}ach=checkAch(st);}
   save();try{localStorage.setItem('mfb_mg',JSON.stringify(MG));}catch(e){}
   window.mfbLevel=pass?L+1:L;snd(pass?'coin':'bad');
   var h='<h2>'+(pass?(n===3?'Perfect shift!':'Shift complete!'):'Not quite…')+'</h2><div class="sub">Level '+L+(S.mod?' · '+MODS[S.mod].n:'')+'</div><div class="sh-stars">'+stars(n)+'</div>';
   h+='<div class="sh-row"><b>💰</b><span>Earned <strong>'+Math.floor(S.earned)+'</strong> of goal '+S.target+'</span></div>';
   h+='<div class="sh-row"><b>'+(S.obDone()?'✅':'⭐')+'</b><span>'+esc(S.ob.txt)+(S.obDone()?'':' (missed)')+'</span></div>';
   h+='<div class="sh-row"><b>🎯</b><span>3 stars: earn '+Math.ceil(S.target*1.6)+'+ and the bonus</span></div>';
-  if(bonus)h+='<div class="sh-row"><b>🎁</b><span>Shift bonus <strong>+'+bonus+'</strong> Tips</span></div>';
-  if(rare)h+='<div class="sh-row"><b>'+rare.e+'</b><span><strong>Rare find: '+esc(rare.n)+'!</strong><br><small>+'+rare.bonus+' Tips and +2% Tips from now on</small></span></div>';
-  if(mile)h+='<div class="sh-row"><b>🏅</b><span><strong>Level '+L+' reward</strong><br>'+esc(mile)+'</span></div>';
-  if(!pass)h+='<div class="sh-row"><b>💡</b><span>Try upgrades (workers, gear), or practise in free play</span></div>';
+  var loot='';
+  if(bonus)loot+='<div class="sh-row"><b>🎁</b><span>Shift bonus <strong>+'+bonus+'</strong> Tips</span></div>';
+  if(rare)loot+='<div class="sh-row"><b>'+rare.e+'</b><span><strong>Rare find: '+esc(rare.n)+'!</strong><br><small>+'+rare.bonus+' Tips and +2% Tips from now on</small></span></div>';
+  if(mile)loot+='<div class="sh-row"><b>🏅</b><span><strong>Level '+L+' reward</strong><br>'+esc(mile)+'</span></div>';
+  ach.forEach(function(x){loot+='<div class="sh-row"><b>'+x.e+'</b><span><strong>Achievement: '+esc(x.n)+'</strong><br><small>+'+x.b+' Tips</small></span></div>';});
+  var rk=rankOf(L+1),rk0=rankOf(L);if(pass&&rk[1]!==rk0[1])loot+='<div class="sh-row"><b>'+rk[0]+'</b><span><strong>New rank: '+rk[1]+'!</strong></span></div>';
+  if(pass){
+    var tier=n>=3?'gold':n===2?'silver':'wood';
+    h+='<button class="sh-chest '+tier+'" data-a="chest"><b>'+(n>=3?'🏆':n===2?'🎁':'🧰')+'</b>Tap to open your '+(n>=3?'golden':n===2?'silver':'wooden')+' chest!</button><div class="sh-loot" hidden>'+loot+'</div>';
+  }else h+='<div class="sh-row"><b>💡</b><span>Try upgrades (workers, gear), or practise in free play</span></div>';
   var nm=nextMile(pass?L+1:L);
   if(nm)h+='<div class="sub" style="margin-top:6px">Next reward at level '+nm.L+': '+nm.n+'</div>';
-  h+='<button class="sh-btn" data-a="next">'+(pass?'▶ Next shift · Level '+(L+1):'↻ Try again')+'</button><button class="sh-btn alt" data-a="up">⬆️ Upgrades</button><button class="sh-btn alt" data-a="col">📖 Rare collection ('+distinct()+'/21)</button><button class="sh-btn alt" data-a="free">🎮 Free play</button><button class="sh-btn alt" data-a="leave">✕ Leave stall</button>';
+  h+='<button class="sh-btn" data-a="next">'+(pass?'▶ Next shift · Level '+(L+1):'↻ Try again')+'</button><button class="sh-btn alt" data-a="up">⬆️ Upgrades</button><button class="sh-btn alt" data-a="col">📖 Collection & achievements</button><button class="sh-btn alt" data-a="free">🎮 Free play</button><button class="sh-btn alt" data-a="leave">✕ Leave stall</button>';
   var d=overlay(h);wire(d,pass?L+1:L);
+  if(n===3)confetti(26);else if(pass)confetti(10);
+  var ch=d.querySelector('.sh-chest');
+  if(ch)ch.onclick=function(){snd('coin');ch.classList.add('open');setTimeout(function(){ch.remove();var lt=d.querySelector('.sh-loot');if(lt){lt.hidden=false;lt.scrollIntoView&&lt.scrollIntoView({block:'nearest'});}confetti(rare||mile?30:14);if(rare)popRare(rare);},480);};
 }
 function collection(back){
-  var st=M.state(),h='<h2>📖 Rare finds</h2><div class="sub">'+distinct()+' of 21 found · each one gives +2% Tips ('+Math.round((rareMult()-1)*100)+'% now)</div>';
+  var h='<h2>📖 Rare finds</h2><div class="sub">'+distinct()+' of 21 found · each one gives +2% Tips ('+Math.round((rareMult()-1)*100)+'% now)</div>';
   for(var c in RARES){h+='<div class="sub" style="margin:6px 0 0;opacity:.9"><b>'+CATN[c]+'</b></div><div class="sh-col">';RARES[c].forEach(function(r,k){var n=D.rare[c+k]||0;h+='<div class="'+(n?'':'no')+'"><b>'+(n?r[0]:'❔')+'</b>'+(n?esc(r[1])+(n>1?' ×'+n:''):'???')+'</div>';});h+='</div>';}
+  h+='<h2 style="margin-top:12px">🏆 Achievements</h2><div class="sub">'+Object.keys(D.ach).length+' of '+ACH.length+' · each pays Tips</div>';
+  ACH.forEach(function(a){var on=D.ach[a[0]];h+='<div class="sh-ach '+(on?'on':'off')+'"><b>'+a[1]+'</b><span><strong>'+esc(a[2])+'</strong><br><small>'+esc(a[3])+'</small></span></div>';});
   h+='<button class="sh-btn alt" data-a="back">← Back</button>';
   var d=overlay(h);d.querySelector('[data-a=back]').onclick=back;
 }
 function wire(d,nextL){
   var st=M.state();
-  [].forEach.call(d.querySelectorAll('[data-a]'),function(b){b.onclick=function(){
+  [].forEach.call(d.querySelectorAll('[data-a]'),function(b){if(b.dataset.a==='chest')return;b.onclick=function(){
     var a=b.dataset.a;snd('click');
     if(a==='next'||a==='start')startShift(nextL);
     else if(a==='free'){clear();S={running:false,free:true};st.spawn=.5;window.mfbLevel=1;}
     else if(a==='up'){clear();var u=ov.querySelector('.mg-ib2.up');if(u)u.click();}
-    else if(a==='col')collection(function(){endScreenAgain(nextL);});
+    else if(a==='col')collection(function(){briefing(nextL);});
     else if(a==='leave'){var x=ov.querySelector('.mg-ib2.x');if(x)x.click();}
   };});
 }
-function endScreenAgain(L){briefing(L);}
+function pathHTML(st,L){
+  var p=P(st.i),h='<div class="sh-path">';
+  for(var k=L-1;k<=L+3;k++){
+    if(k<1){continue;}
+    var cls=k===L?'cur':k<p.L?'done':'',ic;
+    if(k<p.L)ic='★'.repeat(Math.max(1,p.best[k]||1));else if(k%5===0)ic='🧐';else if(mileFor(k))ic='🏅';else ic=String(k);
+    if(k===L&&k%5===0)ic='🧐';else if(k===L&&mileFor(k))ic='🏅';else if(k===L&&k>=p.L)ic=String(k);
+    h+='<div class="n '+cls+'"><b>'+ic+'</b>'+(k%5===0?'boss':'LV '+k)+'</div>';
+  }
+  return h+'</div>';
+}
 function briefing(L){
-  var st=M.state();if(!st)return;var p=P(st.i),mod=modFor(st.i,L),ob=objFor(L,st.i),tg=targetFor(st,L,mod),nm=nextMile(L),best=p.best[L]||0;
+  var st=M.state();if(!st)return;var p=P(st.i),mod=modFor(st.i,L),ob=objFor(L,st.i),tg=targetFor(st,L,mod),nm=nextMile(L),best=p.best[L]||0,rk=rankOf(p.L);
   window.mfbLevel=L;if(S&&S.running)S.running=false;
-  var h='<h2>'+esc(st.d[12])+' '+esc(st.d[0])+'</h2><div class="sub">Shift level <span class="sh-lvtag">LV '+L+'</span>'+(best?' · best '+'★★★'.slice(0,best)+'☆☆☆'.slice(0,3-best):'')+'</div>';
+  var h='<h2>'+esc(st.d[12])+' '+esc(st.d[0])+'</h2><div class="sub">Shift level <span class="sh-lvtag">LV '+L+'</span><span class="sh-rank">'+rk[0]+' '+rk[1]+'</span>'+(best?' · best '+'★★★'.slice(0,best)+'☆☆☆'.slice(0,3-best):'')+'</div>'+pathHTML(st,L);
   h+='<div class="sh-row"><b>⏱</b><span><strong>'+Math.floor(DUR/60)+':'+('0'+DUR%60).slice(-2)+'</strong> shift</span></div>';
   h+='<div class="sh-row"><b>💰</b><span>Goal: earn <strong>'+tg+'</strong> Tips</span></div>';
   h+='<div class="sh-row"><b>⭐</b><span>Bonus: '+esc(ob.txt)+'</span></div>';
   if(mod)h+='<div class="sh-row"><b>'+MODS[mod].e+'</b><span><strong>'+MODS[mod].n+'</strong><br><small>'+MODS[mod].d+'</small></span></div>';
   if(nm)h+='<div class="sh-row"><b>🏅</b><span>Level '+nm.L+' reward: '+nm.n+'</span></div>';
   h+='<div class="sh-row"><b>✨</b><span>Rare finds can drop (collection '+distinct()+'/21)</span></div>';
-  h+='<button class="sh-btn" data-a="start">▶ Start shift</button><button class="sh-btn alt" data-a="col">📖 Rare collection</button><button class="sh-btn alt" data-a="free">🎮 Free play (no timer)</button><button class="sh-btn alt" data-a="leave">✕ Leave</button>';
+  h+='<button class="sh-btn" data-a="start">▶ Start shift</button><button class="sh-btn alt" data-a="col">📖 Collection & achievements</button><button class="sh-btn alt" data-a="free">🎮 Free play (no timer)</button><button class="sh-btn alt" data-a="leave">✕ Leave</button>';
   var d=overlay(h);wire(d,L);
+}
+
+/* ---------- juice: coins fly to the counter, the Tips counter pulses, combo flames ---------- */
+var jRaf=0,jTips=0;
+function juice(){
+  jRaf=requestAnimationFrame(juice);
+  if(!ov){cancelAnimationFrame(jRaf);jRaf=0;return;}
+  var st=M.state();if(!st)return;
+  var d=MG.tips-jTips;jTips=MG.tips;
+  if(d>0.5){
+    var tg=ov.querySelector('.mg-tips'),ln=ov.querySelector('.mg-lane'),cs=ln?ln.querySelectorAll('.mg-c.go'):[];
+    if(tg&&ln){var tr=tg.getBoundingClientRect(),or=ov.getBoundingClientRect(),from=cs.length?cs[cs.length-1].getBoundingClientRect():ln.getBoundingClientRect(),
+      sx=from.left+from.width/2-or.left,sy=from.top+from.height/2-or.top,n=Math.min(7,1+Math.floor(d/Math.max(1,st.u))),k;
+      for(k=0;k<n;k++){(function(k){var c=document.createElement('i');c.className='sh-coin';c.textContent='🪙';c.style.left=(sx+(Math.random()*40-20))+'px';c.style.top=(sy+(Math.random()*20-10))+'px';ov.appendChild(c);
+        setTimeout(function(){c.style.transform='translate('+(tr.left+tr.width/2-or.left-sx)+'px,'+(tr.top+tr.height/2-or.top-sy)+'px) scale(.6)';c.style.opacity='.2';},40+k*60);
+        setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},900+k*60);})(k);}
+      tg.classList.remove('pulse');void tg.offsetWidth;tg.classList.add('pulse');}
+  }
+  var cb=ov.querySelector('.mg-combo');if(cb){var c=st.combo||0;cb.dataset.l=c>=10?3:c>=6?2:c>=3?1:0;}
 }
 
 /* ---------- attach when a stall mini-game opens ---------- */
 function attach(){
   var n=document.getElementById('mg');if(!n||n===ov)return;
-  ov=n;S=null;hud=null;obEl=null;cancelAnimationFrame(raf);
+  ov=n;S=null;hud=null;obEl=null;cancelAnimationFrame(raf);cancelAnimationFrame(jRaf);jTips=MG.tips;jRaf=requestAnimationFrame(juice);
   var st=M.state();if(!st)return;
   briefing(P(st.i).L);
 }
