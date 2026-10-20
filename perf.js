@@ -107,7 +107,7 @@ function loadJS(src,cb){var s=document.createElement('script');s.src=src;s.onloa
 function ensureMini(cb){
   if(loaded){cb&&cb();return;}
   if(loading)return;loading=true;
-  var q=['mini.js?v=2','games.js?v=1','pixel.js?v=1','action.js?v=1','shift.js?v=1'];(function nx(){if(!q.length){loaded=true;loading=false;cb&&cb();return;}loadJS(q.shift(),nx);})();
+  var q=['mini.js?v=2','games.js?v=1','pixel.js?v=1','art.js?v=1','action.js?v=2','shift.js?v=2'];(function nx(){if(!q.length){loaded=true;loading=false;cb&&cb();return;}loadJS(q.shift(),nx);})();
 }
 P.ensureMini=ensureMini;
 var osp=window.openSP;
