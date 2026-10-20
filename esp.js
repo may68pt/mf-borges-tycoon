@@ -22,7 +22,7 @@ function facts(){
   try{var dn=g('DN'),dw=g('dow')();f.wk=dn[dw];}catch(e){}
   try{var ST=g('ST'),stalls=g('stalls');stalls.forEach(function(o){var cat=ST[o.i][1];if(cat==='amen'||cat==='lure'||!o.cnt)return;var t={name:ST[o.i][0],tot:o.tot,cnt:o.cnt};if(!f.best||t.tot>f.best.tot)f.best=t;if(!f.worst||t.tot<f.worst.tot)f.worst=t;});if(f.best===f.worst)f.worst=null;}catch(e){}
   try{var best=0;for(var k in S.fame)if(S.fame[k]>best){best=S.fame[k];f.top=k;}if(best<1)f.top=null;}catch(e){}
-  f.left=f.days-f.day;return f;
+  try{f.sm=window.mfbStaff.summary();}catch(e){}f.left=f.days-f.day;return f;
 }
 function score(f){var s=Math.min(1,f.cul/40)*.25+Math.min(1,f.hyp/40)*.25+Math.min(1,f.her/60)*.3+(f.cash>=0?Math.min(1,.3+f.cash/4000):0)*.2;return Math.round(Math.max(0,Math.min(1,s))*100);}
 
@@ -52,6 +52,10 @@ var OP=[
  ['review',function(f){return f.left>5;},{sweet:['{left} days until the concession review. Lots of time to shine!'],lovey:['{left} days to go. We will get there together. 💪'],cold:['{left} days. Time is not infinite, whatever you think.'],furious:['{left} days. And I want every one of them COUNTED!']}],
  ['night',function(f){return f.ph==='night';},{sweet:['Tonight the hall belongs to the music! Dance a little, chefe!'],lovey:['Night time... the lights, the sound, the people. Pure magic. 🎶'],cold:['The night shift. Try not to blow the speakers.'],furious:['The band is TOO LOUD! Or not loud enough! Make up your mind!']}],
  ['gigs',function(f){return !!f.top;},{sweet:['Our {top} nights have been wonderful! Book more, I love a mosh pit hug!'],lovey:['The {top} crowd is my favourite family. ❤🎸'],cold:['{top} fans are loyal. Fans are customers. Customers are money.'],furious:['{top}! Again {top}! I hear it in my SLEEP!']}],
+ ['staff',function(f){return !!f.sm&&f.sm.workers.length>0;},{sweet:['{nw} workers on the floor today. Sweet kids, but I keep one eye open!'],lovey:['The workers are such darlings. Mostly. ❤'],cold:['{nw} workers today. I trust none of them.'],furious:['{nw} WORKERS and not a brain between them! I am watching EVERY one!']}],
+ ['staff',function(f){return !!f.sm&&f.sm.banned.length>0;},{sweet:['{nb} banned already. I did not enjoy it... much. 😇'],lovey:['Banning people breaks my heart. But rules are rules, querido. 💔'],cold:['{nb} banned. The door is that way. It was always that way.'],furious:['BANNED {nb} and I would ban {nb} more! Out!']}],
+ ['staff',function(f){return !!f.sm&&f.sm.owners.length>0;},{sweet:['{no} owners at their own stalls today. Proper professionals, bless them!'],lovey:['The owners are such gentlemen. I only shout at workers. Mostly. 😘'],cold:['Owners I respect. Workers I supervise. It is a system.'],furious:['The owners at least know how to behave. The WORKERS, tchh!']}],
+ ['greet',function(f){return !!window.mfbStaff&&window.mfbStaff.streak>=2;},{sweet:['Good morning streak: {streak} days! You are my favourite boss!'],lovey:['{streak} good mornings in a row... I might cry. 🥹'],cold:['{streak} greetings. Punctual. Noted.'],furious:['{streak} greetings, FINE. Keep it up. Do not slack!']}],
  ['level',function(f){return true;},{sweet:['Level {lv}, and you wear it so well, meu chefe!'],lovey:['Level {lv}! Look how far we have come. ❤'],cold:['Level {lv}. A number. What matters is what you do with it.'],furious:['Level {lv}?! The real boss is level ONE HUNDRED, and she is me!']}]
 ];
 var VERD={
@@ -70,7 +74,7 @@ function fill(s,f){
   var free=Math.max(0,f.max-f.n);
   return s.replace(/\{(\w+)\}/g,function(m,k){
     var v={cash:f.cash,cashabs:Math.abs(f.cash),cul:f.cul,hyp:f.hyp,her:f.her,n:f.n,max:f.max,free:free,left:Math.max(0,f.left),lv:f.lv,foot:'x'+f.foot.toFixed(2),ev:f.ev.n,
-      best:f.best?f.best.name:'',bestavg:f.best&&f.best.cnt?(f.best.tot/f.best.cnt).toFixed(1):'',worst:f.worst?f.worst.name:'',worstot:f.worst?Math.round(f.worst.tot):'',top:f.top||''}[k];
+      best:f.best?f.best.name:'',bestavg:f.best&&f.best.cnt?(f.best.tot/f.best.cnt).toFixed(1):'',worst:f.worst?f.worst.name:'',worstot:f.worst?Math.round(f.worst.tot):'',top:f.top||'',nw:f.sm?f.sm.workers.length:0,nb:f.sm?f.sm.banned.length:0,no:f.sm?f.sm.owners.length:0,streak:(window.mfbStaff||{}).streak||0}[k];
     return v===undefined?m:v;});
 }
 function opinions(){
@@ -107,7 +111,7 @@ var css=[
 var stl=document.createElement('style');stl.textContent=css;document.head.appendChild(stl);
 
 var panel=null,savedSpeed=0,AV={sweet:'🥰',lovey:'😍',cold:'😐',furious:'😡'},COL={sweet:'#e8478f',lovey:'#ff5c8a',cold:'#6a7a90',furious:'#d6201f'},
-  MOODN={sweet:'Sweet',lovey:'Lovey-dovey',cold:'Cold as ice',furious:'FURIOUS'},TI={cash:'💰',culture:'🎭',hype:'🔥',heritage:'🏛',stalls:'🧺',best:'🏆',worst:'🥶',event:'📅',review:'⏰',night:'🌙',gigs:'🎸',level:'⭐',wild:'💬'};
+  MOODN={sweet:'Sweet',lovey:'Lovey-dovey',cold:'Cold as ice',furious:'FURIOUS'},TI={cash:'💰',culture:'🎭',hype:'🔥',heritage:'🏛',stalls:'🧺',best:'🏆',worst:'🥶',event:'📅',review:'⏰',night:'🌙',gigs:'🎸',level:'⭐',wild:'💬',staff:'🧢',greet:'👋'};
 var HEAD={sweet:['Oh, chefe! Come, sit, tell me everything. 💕','Meu amor! Look at my market, is it not lindo?'],lovey:['Come here, querido, I was just thinking about you. ❤','Ai, my favourite person in the whole hall!'],cold:['Yes? Make it quick.','I am busy. Talk.'],furious:['WHAT?! Oh, it is you. Fine. LISTEN.','You have a nerve showing your face today!']};
 function tile(ic,label,val,frac,goal){var lo=goal!=null&&frac<1;return '<div class="et'+(lo?' lo':'')+'">'+ic+' '+label+'<b>'+val+'</b>'+(frac!=null?'<div class="b"><u style="width:'+Math.round(Math.max(0,Math.min(1,frac))*100)+'%"></u></div>':'')+'</div>';}
 function render(newMood){
@@ -134,11 +138,18 @@ function render(newMood){
   h+='<div class="eo"><b>'+(f.ev.i?'📅':'📅')+'</b><span><strong>Today:</strong> '+esc(f.ev.n)+'</span></div>';
   if(f.best)h+='<div class="eo"><b>🏆</b><span><strong>Top stall:</strong> '+esc(f.best.name)+' · €'+Math.round(f.best.tot)+' ('+f.best.cnt+' sales)</span></div>';
   if(f.worst)h+='<div class="eo"><b>🥶</b><span><strong>Quietest stall:</strong> '+esc(f.worst.name)+' · €'+Math.round(f.worst.tot)+'</span></div>';
+  var sm=f.sm;if(sm){h+='<h3>🧢 Who runs the stalls today</h3>';
+    var rows=function(a,ic){return a.map(function(x){return '<div class="eo"><b>'+ic+'</b><span><strong>'+esc(x.name)+'</strong> · '+esc(x.stall)+(x.role==='worker'&&!x.banned?' <span style="opacity:.8">'+'●'.repeat(x.strikes)+'○'.repeat(Math.max(0,3-x.strikes))+'</span>':'')+(x.banned?' · banned '+x.days+'d':'')+'</span></div>';}).join('');};
+    h+=rows(sm.owners,'👔')+rows(sm.workers,'🧢')+rows(sm.banned,'🚫');
+    var SD=window.mfbStaff;h+='<div class="eo"><b>📒</b><span><strong>Discipline record:</strong> €'+SD.fines+' in fines · '+SD.scolds+' scoldings · '+SD.bans+' bans · good-morning streak '+SD.streak+'</span></div>';
+    SD.log.slice(0,3).forEach(function(t){h+='<div class="eo" style="opacity:.85"><b>•</b><span>'+esc(t)+'</span></div>';});
+    if(!SD.greeted&&S.ph==='setup')h+='<button class="ebt" data-a="greet">👋 Say good morning</button>';}
   h+='<h3>💬 What Esmeralda thinks</h3>';
   o.lines.forEach(function(l,k){h+='<div class="eo" style="animation-delay:'+(k*.12)+'s"><b>'+(TI[l.t]||'💬')+'</b><span>'+esc(l.s)+'</span></div>';});
   h+='<button class="ebt" data-a="again">🎤 Ask her again</button><button class="ebt alt" data-a="close">Back to the market</button></div>';
   panel.innerHTML=h;
   panel.querySelector('[data-a=again]').onclick=function(){snd('click');render();};
+  var gb=panel.querySelector('[data-a=greet]');if(gb)gb.onclick=function(){window.mfbStaff.greet();render();};
   panel.querySelector('[data-a=close]').onclick=panel.querySelector('.ex').onclick=close;
   panel.onclick=function(e){if(e.target===panel)close();};
 }
