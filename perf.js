@@ -79,7 +79,7 @@ function watch(t){
     var avg=acc/cnt;acc=0;cnt=0;
     if(P.mode==='auto'){
       if(avg>38&&P.tier>0){setTier(P.tier-1);lastDown=t;okFor=0;}
-      else if(avg<20&&P.tier<2&&t-lastDown>90000){okFor++;if(okFor>=4){okFor=0;setTier(P.tier+1);}}
+      else if(avg<20&&P.tier<1&&t-lastDown>90000){okFor++;if(okFor>=4){okFor=0;setTier(P.tier+1);}}
       else okFor=0;
     }
   }
