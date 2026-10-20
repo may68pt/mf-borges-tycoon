@@ -144,10 +144,10 @@ function PTiming(h,o,cb){
     else drawCloth(g,o.col,anim?anim.k:Math.min(k,n-1),anim?anim.t:0,done,fin,wob);
   }
   function nz(){
-    zw=Math.max(.16,.3+.04*o.gear-.04*k);zc=zw/2+.06+Math.random()*(1-zw-.12);
+    var L=Math.max(1,window.mfbLevel||1);zw=Math.max(.07,.3+.03*o.gear-.04*k-.014*(L-1));zc=zw/2+.06+Math.random()*(1-zw-.12);
     z.style.left=((zc-zw/2)*100)+'%';z.style.width=(zw*100)+'%';
     l.textContent=steps[k]+' ('+(k+1)+'/'+n+')';
-    var speed=1.0+.25*k;                              // bar widths per second
+    var speed=(1.0+.25*k)*(1+.08*(Math.max(1,window.mfbLevel||1)-1));                              // bar widths per second
     c.style.animationDuration=(1/speed).toFixed(3)+'s';
     c.style.animationPlayState='running';
     for(var i=0;i<dots.length;i++)dots[i].className=i<k?'ok':i===k?'on':'';
@@ -156,10 +156,10 @@ function PTiming(h,o,cb){
   function pos(){var b=bar.clientWidth||1,x=parseFloat(getComputedStyle(c).left);if(isNaN(x))x=0;return Math.max(0,Math.min(1,x/b));}
   function tap(){
     if(dead||anim||fin)return;
-    var x=pos(),d=Math.abs(x-zc),q=d<=zw/2?1-d/(zw/2)*.4:.3;
+    var x=pos(),d=Math.abs(x-zc),q=d<=zw/2?1-d/(zw/2)*.4:d<=zw/2+.025?.35:0;
     c.style.animationPlayState='paused';
     qs.push(q);wob[k]=q>.8?0:(Math.random()<.5?-1:1);
-    res.textContent=q>.9?PRAISE[0]:q>.7?PRAISE[1]:q>.5?PRAISE[2]:PRAISE[3];
+    res.textContent=q<=0?'Miss!':q>.9?PRAISE[0]:q>.7?PRAISE[1]:q>.5?PRAISE[2]:PRAISE[3];
     snd(q>.6?'click':'bad');
     anim={k:k,t:0};
   }
@@ -167,7 +167,7 @@ function PTiming(h,o,cb){
     if(dead||!h.isConnected){dead=true;return;}
     var dt=Math.min(.1,Math.max(0,(ts-last)/1000||0));last=ts;
     if(anim){anim.t+=dt/.34;if(anim.t>=1){done=k+1;k++;anim=null;if(k>=n){fin={t:0};snd('coin');}else nz();}paint();}
-    else if(fin){fin.t+=dt/.9;paint();if(fin.t>=1){dead=true;var a=0;qs.forEach(function(v){a+=v;});cb(a/qs.length);return;}}
+    else if(fin){fin.t+=dt/.9;paint();if(fin.t>=1){dead=true;var a=0;var bad=0;qs.forEach(function(v){a+=v;if(v<=0)bad++;});cb(a/qs.length,bad);return;}}
     raf=requestAnimationFrame(step);
   }
   btn.onpointerdown=function(e){e.preventDefault();tap();};
@@ -185,7 +185,7 @@ TPL.fold=function(h,a){
   function mount(){if(tm&&tm.stop)tm.stop();tm=null;h.innerHTML=IH(a.items,'Pick a garment, then tap in the green for every fold');}
   mount();
   h.onclick=function(e){if(tm)return;var p=pick(e);if(!p)return;var it=a.items[p.id];
-    tm=PTiming(h,{kind:'fold',labels:FOLD_LABELS,col:shirtColour(it,p.id),gear:a.gear,btn:'FOLD!'},function(q){tm=null;a.add(p.id,q);mount();});};
+    tm=PTiming(h,{kind:'fold',labels:FOLD_LABELS,col:shirtColour(it,p.id),gear:a.gear,btn:'FOLD!'},function(q,bad){tm=null;if(bad)a.miss('Missed the mark!');else a.add(p.id,q);mount();});};
   return {tick:function(){}};
 };
 
@@ -197,7 +197,7 @@ TPL.craft=function(h,a){
   function mount(){if(tm&&tm.stop)tm.stop();tm=null;h.innerHTML=IH(a.items,'Pick a colour, then tap in the green: measure, cut, stitch and print');}
   mount();
   h.onclick=function(e){if(tm)return;var p=pick(e);if(!p)return;var it=a.items[p.id];
-    tm=PTiming(h,{kind:'cloth',labels:['Measure the fabric','Cut it out','Stitch and print'],col:shirtColour(it,p.id),gear:a.gear,btn:'TAP!'},function(q){tm=null;a.add(p.id,q);mount();});};
+    tm=PTiming(h,{kind:'cloth',labels:['Measure the fabric','Cut it out','Stitch and print'],col:shirtColour(it,p.id),gear:a.gear,btn:'TAP!'},function(q,bad){tm=null;if(bad)a.miss('Missed the mark!');else a.add(p.id,q);mount();});};
   return {tick:function(){}};
 };
 M.PTiming=PTiming;
