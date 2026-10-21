@@ -225,7 +225,15 @@ var css=document.createElement('style');css.textContent=[
 'body.u2 #hud>.ht:active i[data-ic]{transform:scale(.9)}',
 'body.u2 #hud>#hst-t i[data-ic]{animation:cstar 3s ease-in-out infinite}',
 'body.u2 #hud>.ht i[data-ic].bump{animation:pxbump .45s cubic-bezier(.3,1.6,.5,1)}@keyframes pxbump{40%{transform:scale(1.3) rotate(-6deg)}}',
-'@media (prefers-reduced-motion:reduce){body.u2 #hud>.ht i[data-ic]{animation:none!important}}'
+'@media (prefers-reduced-motion:reduce){body.u2 #hud>.ht i[data-ic]{animation:none!important}}',
+/* no wrap: just icon, tiny label and value, with an outline so they read over the scene */
+'body.u2 #hud>.ht,body.u2 #hud>#spd{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;min-height:0!important;padding:2px 0!important;overflow:visible!important}',
+'body.u2 #hud>.ht .bar,body.u2 #hud>.ht .pips{display:none!important}',
+'body.u2 #hud>.ht i[data-ic]{filter:drop-shadow(0 2px 0 rgba(0,0,0,.6)) drop-shadow(0 0 3px rgba(0,0,0,.35))}',
+'body.u2 #hud>.ht small{color:#fff!important;opacity:.95;text-shadow:-1px -1px 0 #1a1426,1px -1px 0 #1a1426,-1px 1px 0 #1a1426,1px 1px 0 #1a1426,0 2px 0 #1a1426}',
+'body.u2 #hud>.ht b.v,body.u2 #hud>#spd{color:#fff;text-shadow:-1.5px -1.5px 0 #1a1426,1.5px -1.5px 0 #1a1426,-1.5px 1.5px 0 #1a1426,1.5px 1.5px 0 #1a1426,0 2.5px 0 #1a1426}',
+'body.u2 #hud>.ht small{color:color-mix(in srgb,var(--hc) 45%,#fff)!important}',
+'body.u2 #hud>#spd{font-size:22px!important}body.u2 #hud>#spd.on{color:#ffd166}'
 ].join('\n');document.head.appendChild(css);
 function paint(){var l=document.querySelectorAll('#hud i[data-ic]');for(var i=0;i<l.length;i++){var e=l[i],n=e.getAttribute('data-ic');if(e.__ic!==n){e.__ic=n;e.innerHTML=img(n);}}}
 /* the day tile follows the clock: sun, then sunset at closing time, then moon */
