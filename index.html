@@ -46,15 +46,15 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--br);outline-of
 <link rel="stylesheet" href="ui.css?v=9"><link rel="stylesheet" href="gm.css?v=2"></head><body>
 <div id="app"><div id="stage"><canvas id="c"></canvas><div id="tint"></div><div id="vig"></div>
 <div id="hud"><div class="p hl" style="padding:2px 4px"><img id="logoimg" alt="Hard Club" style="height:20px;image-rendering:pixelated;display:block"></div>
-<div class="ht tap" id="hst-t" style="order:1" title="Venue rating: tap for your standing"><i>⭐</i><small id="hstl">Rating</small><b class="v" id="hst">5★</b><span class="pips" id="hpips"></span></div>
-<div class="ht" id="hday-t" style="order:2;--hc:#8fd3ff"><i id="w">☀️</i><small><span id="dw"></span> · D<span id="d"></span></small><b class="v" id="t"></b><span id="ph" hidden></span></div>
-<div class="ht" id="cc" style="order:3;--hc:#f2c94c"><i>💰</i><small>Cash</small><b class="v">€<span id="cash"></span></b></div>
-<div class="ht tap" id="hrv-t" style="order:4;--hc:#35b6ff" title="Next city assessment: tap for your standing"><i>📋</i><small>Review in</small><b class="v" id="hrv">14d</b></div>
-<div class="ht" style="order:6;--hc:#b36bff"><i>🎭</i><small>Culture</small><b class="v" id="cul"></b><span class="bar"><u id="bcul"></u></span></div>
-<div class="ht" style="order:7;--hc:#ff6b4a"><i>🔥</i><small>Hype</small><b class="v" id="hyp"></b><span class="bar"><u id="bhyp"></u></span></div>
-<div class="ht" style="order:8;--hc:#c9a46a"><i>🏛️</i><small>Heritage</small><b class="v" id="her"></b><span class="bar"><u id="bher"></u></span></div>
-<div class="ht" style="order:9;--hc:#2fbf71"><i>🏅</i><small>Level</small><b class="v" id="lv"></b><span class="bar"><u id="bxp"></u></span></div>
-<div class="ht" style="order:10;--hc:#ec5fa3"><i>🏪</i><small>Stalls</small><b class="v" id="sl"></b></div>
+<div class="ht tap" id="hst-t" style="order:1" title="Venue rating: tap for your standing"><i data-ic="star">⭐</i><small id="hstl">Rating</small><b class="v" id="hst">5★</b><span class="pips" id="hpips"></span></div>
+<div class="ht" id="hday-t" style="order:2;--hc:#8fd3ff"><i id="hdi" data-ic="sun">☀️</i><span id="w" hidden></span><small><span id="dw"></span> · D<span id="d"></span></small><b class="v" id="t"></b><span id="ph" hidden></span></div>
+<div class="ht" id="cc" style="order:3;--hc:#f2c94c"><i data-ic="cash">💰</i><small>Cash</small><b class="v">€<span id="cash"></span></b></div>
+<div class="ht tap" id="hrv-t" style="order:4;--hc:#35b6ff" title="Next city assessment: tap for your standing"><i data-ic="review">📋</i><small>Review in</small><b class="v" id="hrv">14d</b></div>
+<div class="ht" style="order:6;--hc:#b36bff"><i data-ic="culture">🎭</i><small>Culture</small><b class="v" id="cul"></b><span class="bar"><u id="bcul"></u></span></div>
+<div class="ht" style="order:7;--hc:#ff6b4a"><i data-ic="hype">🔥</i><small>Hype</small><b class="v" id="hyp"></b><span class="bar"><u id="bhyp"></u></span></div>
+<div class="ht" style="order:8;--hc:#c9a46a"><i data-ic="heritage">🏛️</i><small>Heritage</small><b class="v" id="her"></b><span class="bar"><u id="bher"></u></span></div>
+<div class="ht" style="order:9;--hc:#2fbf71"><i data-ic="level">🏅</i><small>Level</small><b class="v" id="lv"></b><span class="bar"><u id="bxp"></u></span></div>
+<div class="ht" style="order:10;--hc:#ec5fa3"><i data-ic="stalls">🏪</i><small>Stalls</small><b class="v" id="sl"></b></div>
 <div class="row" id="sp" style="margin:0;pointer-events:auto"></div></div>
 <div id="joy"><i id="knob"></i></div><div id="ctl"></div><canvas id="mm" width="192" height="84"></canvas><div id="spn" hidden></div></div>
 <div id="dock"><div class='p' id='msgw'><span id='mgr'></span><span id='msg'></span></div><div class='p px' id='lims' style='margin-bottom:6px;font-size:11px'></div><div class="tabs" id="tabs"></div>
@@ -80,5 +80,5 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--br);outline-of
 <script src="calm.js?v=5"></script>
 <script src="perf.js?v=8"></script>
 <script src="batch.js?v=2"></script>
-<script src="lite.js?v=2"></script><script src="esmeralda.js?v=3"></script><script src="esp.js?v=3"></script><script src="staff.js?v=2"></script><script src="pause.js?v=2"></script><script src="portrait.js?v=1"></script><script src="manager.js?v=1"></script><script src="career.js?v=1"></script>
+<script src="lite.js?v=2"></script><script src="esmeralda.js?v=3"></script><script src="esp.js?v=3"></script><script src="staff.js?v=2"></script><script src="pause.js?v=2"></script><script src="portrait.js?v=1"></script><script src="manager.js?v=1"></script><script src="career.js?v=1"></script><script src="hudicons.js?v=1"></script>
 </body></html>
