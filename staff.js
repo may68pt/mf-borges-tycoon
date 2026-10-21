@@ -1,6 +1,7 @@
 /* staff.js - who runs the stalls, and Esmeralda's discipline. Every morning each stall is run either by its OWNER or by a hired WORKER.
    Esmeralda is the boss of the market: owners get respect, workers get the hard treatment, because when the owner is absent she is the boss
-   of that stall. In the morning everybody has to greet her (the player too, with the "Say good morning" button): whoever skips it is fined.
+   of that stall. In the morning every vendor walks over to her and says "Bom dia" before opening the stall, and she answers in her own
+   style and mood. A cheeky worker who skips it gets told off and fined later.
    During the day workers sometimes slack (phone, nap, smoking, rude to customers): she walks over, tells them off and fines them. Three strikes
    and the worker is BANNED: the stall is shut for a couple of days. At the end of the market Esmeralda walks out and goes home.
    Needs esmeralda.js. Add ?noesm to switch it off. */
@@ -102,16 +103,52 @@ function ban(rec,p){
 }
 function note(t){D.log.unshift(t);if(D.log.length>8)D.log.pop();}
 
-/* ---------- the morning greeting ---------- */
-function stallGreets(rec){
-  var s=rec.s;rec.done=true;
-  var pOK=rec.role==='owner'?.96:Math.max(.35,.8-.35*rec.rude);
-  if(Math.random()<pOK){
-    bub(rec.role==='owner'?one(['Bom dia, Esmeralda! All set.','Bom dia, dona Esmeralda!','Good morning! The stall is ready.']):one(['B-bom dia, dona Esmeralda!','Bom dia! Yes boss!','Bom dia, dona Esmeralda... 😬']),s.m,2.7,'love',2.6);
-  }else{
-    bub(rec.role==='owner'?'(busy, forgot to greet...)':one(['(pretends not to see her)','(headphones on...) 🎧','(yawns) ...']),s.m,2.7,'say',2.6);
-    D.skips++;enqueue(rec,'greet');
-  }
+/* ---------- the morning greeting: vendors walk to Esmeralda before opening the stall ---------- */
+var HI_O=['Bom dia,\nEsmeralda!','Bom dia,\nminha querida!','Bom dia!\nTudo bem?'],
+    HI_W=['Bom dia,\ndona Esmeralda!','B-bom dia,\ndona Esmeralda!','Bom dia,\nchefe!'],
+    SKIP=['(pretends not to see her)','(headphones on...) 🎧','(yawns) ...'];
+var ANS={
+  sweet:{o:['Bom dia, meu amor!\nVende muito! 💕','Bom dia, querida!\nEstás linda!','Ai, bom dia!\nQue alegria!'],w:['Bom dia, filho!\nTrabalhinho, sim?','Bom dia, querido!\nSorri aos clientes!','Bom dia! Hoje\nvai correr bem!']},
+  lovey:{o:['Bom dia! Dá cá\num beijinho! 💋','Meu tesouro!\nBom dia! ❤','Bom dia, amor!\nTrouxe bolinhos!'],w:['Bom dia! Já\ncomeste, filho?','Ai, que fofo!\nBom dia! 🤗','Bom dia, meu\nquerido! ❤']},
+  cold:{o:['Bom dia.\nBanca às dez.','Hm. Bom dia.','Bom dia.\nPreços à vista.'],w:['Hm. Bom dia.\nEstou a ver-te.','Bom dia. Nada\nde telemóvel.','Bom dia.\nAo trabalho.']},
+  furious:{o:['BOM DIA?!\nSÃO HORAS?!','Bom dia. Hmpf.\nNÃO me irrites.','BOM DIA! E\nARRUMA ISSO!'],w:['BOM DIA?! E A\nBANCA?! JÁ!','Bom dia nada!\nMEXE-TE!','BOM DIA! QUERO\nTUDO PRONTO!']}};
+var BACK_W={sweet:['Obrigado! 😊','Sim, dona! 💪'],lovey:['Já comi! 😊','Obrigado! ❤'],cold:['...sim, dona.','Ok... 😬'],furious:['😰 Já vou!','Sim, sim! 😬']},
+    BACK_O={sweet:['Obrigada! 💕','És um amor!'],lovey:['Beijinho! 💋','Ai, obrigada!'],cold:['Pois. 🙄','Está bem.'],furious:['Calma, mulher!','Ui... 😅']};
+function vbub(v,t,k,l){bub(t,v,2.4,k||'say',l||2.6);}
+function canGreet(s){var v=s.m&&s.m.userData&&s.m.userData.v;return !!(v&&v.al&&eligible(s)&&s.pr&&(S.ph==='setup'||S.ph==='day')&&ESM.visible&&!D.gone&&s.__gd!==S.day);}
+function near(){var p=ESM.position,a=Math.random()*6.28;return [p.x+Math.sin(a)*.9,p.z+Math.cos(a)*.9];}
+var _arrive=window.arrive,_settle=window.settle;
+function finish(s){var h=s.__home;s.goal='home';s.st='walk';s.wp=h?[h]:[];}
+window.arrive=arrive=function(s){
+  try{
+    if(s.goal==='home'&&canGreet(s)){
+      var rec=recOf(s),v=s.m.userData.v;s.__gd=S.day;
+      var go=!rec||rec.role==='owner'?.96:Math.max(.35,.8-.35*rec.rude);
+      if(rec)rec.done=true;
+      if(Math.random()<go){s.__home=[v.position.x,v.position.z];s.__try=0;s.goal='esm';s.wp=[near()];return;}
+      vbub(v,one(SKIP));D.skips++;if(rec)enqueue(rec,'greet');
+    }
+    if(s.goal==='esm'){
+      var v2=s.m.userData.v,dx=ESM.position.x-v2.position.x,dz=ESM.position.z-v2.position.z;
+      if(Math.hypot(dx,dz)>1.8&&s.__try++<3&&ESM.visible){s.wp=[near()];return;}  // she moved: follow her
+      v2.rotation.y=Math.atan2(dx,dz);
+      var r=recOf(s),own=!r||r.role==='owner';
+      vbub(v2,one(own?HI_O:HI_W),'love',2.4);
+      s.st='greet';s.__gt=S.t+5;s.__ans=0;return;
+    }
+  }catch(e){console.warn('greet',e);}
+  return _arrive(s);
+};
+window.settle=settle=function(s){if(s.st==='greet'){finish(s);s.wp=[];}return _settle(s);};
+function greetTick(){
+  stalls.forEach(function(s){
+    if(s.st!=='greet')return;var v=s.m.userData.v,r=recOf(s),own=!r||r.role==='owner',m=E.mood||'sweet';
+    if(!s.__ans&&S.t>=s.__gt-3.5){s.__ans=1;
+      try{var dx=v.position.x-ESM.position.x,dz=v.position.z-ESM.position.z;ESM.rotation.y=Math.atan2(dx,dz);}catch(e){}
+      E.say(one((ANS[m]||ANS.sweet)[own?'o':'w']),'say',ESM,2.8);snd(m==='furious'?'bad':'click');}
+    if(s.__ans===1&&S.t>=s.__gt-1.2){s.__ans=2;vbub(v,one((own?BACK_O:BACK_W)[m]||['Obrigado!']),m==='furious'?'say':'love',2);}
+    if(S.t>=s.__gt||S.ph!=='setup'&&S.ph!=='day')finish(s);
+  });
 }
 function playerGreets(){
   if(D.greeted||S.ph!=='setup'||!ESM.visible)return false;
@@ -143,16 +180,11 @@ function dayTick(gt){
     if(wk.length&&E.mood!=='lovey')enqueue(one(wk),'check');}
 }
 
-/* ---------- the player's greeting button ---------- */
-var btn=document.createElement('button');btn.id='esg';btn.type='button';btn.hidden=true;
-var st0=document.createElement('style');st0.textContent='#esg{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;min-height:46px;padding:8px 18px;border-radius:24px;border:3px solid #111;background:#e8478f;color:#fff;font:900 14px inherit;font-family:inherit;box-shadow:0 4px 0 rgba(0,0,0,.4);cursor:pointer;animation:esgb 1s infinite}@keyframes esgb{50%{transform:translateX(-50%) scale(1.06)}}#esg small{display:block;font-size:10px;opacity:.9}';
-document.head.appendChild(st0);document.body.appendChild(btn);
-btn.onclick=function(e){e.stopPropagation();playerGreets();};
 function hhmm(m){m=Math.floor(m);return Math.floor(m/60)+':'+('0'+m%60).slice(-2);}
 var DOOR=[22.5,10.6];
 
 /* ---------- the per-frame hook ---------- */
-var prev=R.render.bind(R),last=performance.now(),lastBtn='';
+var prev=R.render.bind(R),last=performance.now();
 R.render=function(sc,cam){
   try{
     var n=performance.now(),dt=Math.min(.1,(n-last)/1000);last=n;
@@ -160,10 +192,8 @@ R.render=function(sc,cam){
       var ph=S.ph,gt=S.speed?dt*S.speed/2:0;
       if(ph==='setup'&&D.day!==S.day)morning();
       if(ph==='setup'&&S.speed){
-        while(D.round.length&&D.round[0].at<=S.t){var r=D.round.shift();if(!r.banned&&r.s.m&&r.s.m.visible)stallGreets(r);}
-        if(!D.greeted&&S.t>=DEADLINE)playerPenalty();
       }
-      if(ph==='day'&&!D.greeted)playerPenalty();
+      greetTick();
       if(ph==='day'&&gt>0)dayTick(gt);
       if(ph==='changeover'&&!D.leaving&&S.t>=21*60+15){D.leaving=true;queue.length=0;
         var tries=0;(function go(){if(!E.goTo(DOOR[0],DOOR[1],function(){E.say('Boa noite a todos! Amanhã quero\nTUDO impecável!','say',ESM,4);snd('click');setTimeout(function(){D.gone=true;},2600);},20)&&tries++<20)setTimeout(go,1000);})();}
@@ -173,9 +203,6 @@ R.render=function(sc,cam){
       P.forEach(function(p,s){if(p.ban>0&&s.__bo)s.off=true;});
       if(D.gone)ESM.visible=false;
     }
-    // greeting button
-    var show=S&&!S.over&&S.ph==='setup'&&!D.greeted&&ESM.visible,key=show?hhmm(DEADLINE-S.t):'';
-    if(key!==lastBtn){lastBtn=key;btn.hidden=!show;if(show)btn.innerHTML='👋 Say good morning to Esmeralda<small>before '+hhmm(DEADLINE)+' or she fines you</small>';}
   }catch(e){}
   return prev(sc,cam);
 };

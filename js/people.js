@@ -69,9 +69,9 @@ for(const [dx,dz] of [[1.05,0],[-1.05,0],[0,1.05],[0,-1.05]]){bx(sc,.35,.8,.35,m
 // pillars in the main hall + the day stage
 for(const x of [10.2,12.6,19.2]){colm(x,9.4,2.4);WALLS.push([x-.15,9.25,x+.15,9.55]);}for(const x of [6.4,8.8,11,15.2,17.6,19.4]){colm(x,11.9,2.4);WALLS.push([x-.15,11.75,x+.15,12.05]);}
 bx(sc,6.8,.14,.12,9.5,2.7,9.4,RED,1);bx(sc,13.1,.14,.12,12.9,2.7,11.9,RED,1);
-bx(sc,3.4,.3,2,6.9,.15,10.1,0x6b4f3a);bx(sc,3.5,.04,2.1,6.9,.32,10.1,0x2a2a35,1);bx(sc,.05,1.5,2,5.25,1.05,10.1,0x7a1f3d,1);for(const z of [9.15,11.05])bx(sc,.1,2.3,.1,8.4,1.15,z,0x555a66,1);bx(sc,.1,.1,2,8.4,2.3,10.1,0x555a66,1);WALLS.push([5.2,9.1,8.6,11.1]);
-const DSL=[0,1,2,3].map(i=>{const m=new THREE.Mesh(gm(.16,.16,.16),new THREE.MeshBasicMaterial({color:0x333340}));m.position.set(8.3,2.2,9.4+i*.45);sc.add(m);return m;});
-const PFD=[0,1,2].map(i=>{const p=genChar('local','pd'+i);p.position.set([6.3,7.2,6.3][i],.3,[9.6,10.1,10.6][i]);p.rotation.y=Math.PI/2;p.visible=false;p.on=false;sc.add(p);return p;});
+bx(sc,2.7,.3,2.7,3.4,.15,10.6,0x6b4f3a);bx(sc,2.8,.04,2.8,3.4,.32,10.6,0x2a2a35,1);bx(sc,.05,1.5,2.7,2.08,1.05,10.6,0x7a1f3d,1);for(const z of [9.35,11.85])bx(sc,.1,2.3,.1,4.6,1.15,z,0x555a66,1);bx(sc,.1,.1,2.6,4.6,2.3,10.6,0x555a66,1);WALLS.push([2,9.25,4.75,11.95]);
+const DSL=[0,1,2,3].map(i=>{const m=new THREE.Mesh(gm(.16,.16,.16),new THREE.MeshBasicMaterial({color:0x333340}));m.position.set(4.5,2.2,9.9+i*.45);sc.add(m);return m;});
+const PFD=[0,1,2].map(i=>{const p=genChar('local','pd'+i);p.position.set([2.8,3.7,2.8][i],.3,[10.1,10.6,11.1][i]);p.rotation.y=Math.PI/2;p.visible=false;p.on=false;sc.add(p);return p;});
 // shift the outside scenery onto the sloping terrain
 for(let i=W0;i<sc.children.length;i++){const o=sc.children[i];if(o.userData.nofix)continue;o.position.y+=gb(o.position.x,o.position.z);}
 // ---- the granite base: solid, uneven plinth — one storey at the west end (garage doors), two at the east end (police station) — rounded corners, red railings, twin stairs front and east ----
